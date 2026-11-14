@@ -470,6 +470,13 @@ table.mfgrid td.more{text-align:center;color:var(--muted);font-size:12px;backgro
 .oc{display:flex;gap:5px;align-items:center}
 .rmsg{color:var(--hold);background:var(--hold-soft);border:1px solid var(--hold);border-radius:4px;padding:6px 9px;font-size:12.5px}
 .rf{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+
+.dtabs{display:flex;border-bottom:1px solid var(--line);font-size:13px}
+.dtabs span{padding:8px 14px;color:var(--muted)}
+.dtabs .cur{color:var(--ink);font-weight:600;border-bottom:2px solid #2f6fdf}
+.clog{padding:10px 12px;max-height:520px;overflow:auto}
+.clog .ln{grid-template-columns:44px 48px 1fr}
+.dl .record{margin-top:6px}
 </style>
 </head>
 <body>
@@ -821,7 +828,7 @@ function recordForm() {
   if (call.phase !== 'ended' && !S.event) return '';
   if (ready) return `<div class="record done"><b>✓ 通話完了 · Call recorded</b> by 佐藤 at ${esc(form.savedAt || '15:45')} · supplier stated <b>••••${esc(last4(p3.invoice.ending))}</b>, which matches the invoice · ${esc(S.event?.event_id || '')}</div>`;
   const oc = (v, ja, en) => `<label class="oc"><input type="radio" name="oc" value="${v}" ${form.outcome === v ? 'checked' : ''}> ${ja} <span class="muted">${en}</span></label>`;
-  return `<div class="record"><div class="rh">${mtag}<b>通話結果を記録 · Record the call</b><span class="muted small">AP4514 · ${esc(c?.person || '')} · ${esc(c?.phone_masked || '')} · 00:36</span></div>
+  return `<div class="record"><div class="rh"><b>通話結果を記録 · Record the call</b><span class="muted small">AP4514 · ${esc(c?.person || '')} · ${esc(c?.phone_masked || '')} · 00:36</span></div>
     <div class="rrow"><label for="digits">相手が述べた口座番号 (下4桁)<span class="muted">Account ending the supplier stated</span></label>
       <input id="digits" inputmode="numeric" maxlength="4" placeholder="••••" value="${esc(form.digits)}" autocomplete="off">
       <button class="chipbtn" id="fillDigits">From call log: ${esc(last4(p3.invoice.ending))}</button></div>
@@ -834,6 +841,35 @@ function recordForm() {
 }
 
 function sCall() {
+  return (call.phase === 'ended' || S.event) ? sConfirmInMF() : sCallLive();
+}
+
+// After the call: back in Money Forward, on the payment request itself.
+function sConfirmInMF() {
+  const p3 = P('P3'), ready = isReady(p3), b = bank(p3.invoice.bank), a = bank(p3.on_file.bank);
+  const lines = VOICE(p3.invoice_no, last4(p3.invoice.ending), p3.trusted_contact?.phone_masked || '');
+  return `${say(ready ? 'Recorded on the payment request. Matte re-ran the same rule and <b>AP4514 is ready for approval</b>.' : 'Call done. Back in Money Forward, the bookkeeper records what the supplier said <b>on the payment request itself</b>.')}
+  ${mfTabs('申請一覧')}
+  <div class="mfdrawer" style="margin-top:4px"><div class="dh"><span class="x">✕</span><span>申請番号：${APNO.P3}</span><span>タイトル：2026年11月 ${esc(p3.supplier_ja.replace('株式会社', ''))} 請求書</span><span class="sp"></span><button disabled>複製</button><button disabled>詳細</button><button disabled class="mfsearch">編集</button></div>
+    <div class="dgrid"><div class="dl"><h5>基本情報</h5><table class="kv">
+      <tr><th>申請ステータス</th><td><span class="stp">✓ 承認済み</span></td></tr>
+      <tr><th>${mtag}振込先チェック</th><td>${ready ? '<span class="badge ok">確認済み · Ready for approval</span>' : '<span class="badge hold">保留 · Held</span>'}</td></tr>
+      <tr><th>支払先</th><td>${esc(p3.supplier_ja)}</td></tr><tr><th>支払合計金額 (税込)</th><td><b>${en(p3.amount_jpy)}</b></td></tr>
+      <tr><th>振込先</th><td>${esc(b.ja)} ${esc(b.br)} 普通 ••••<b class="chgtxt">${esc(last4(p3.invoice.ending))}</b><div class="src">取引先マスタ: ${esc(a.ja)} ${esc(a.br)} ••••${esc(last4(p3.on_file.ending))}</div></td></tr></table>
+      <h5 style="margin-top:16px">${mtag}振込先の確認 · Payee confirmation</h5>
+      ${recordForm()}
+      <ul class="checks">
+        <li><span class="cb ok">✓</span><span>Called the number on the <b>vendor master</b>: ${esc(p3.trusted_contact?.phone_masked || '—')}</span></li>
+        <li><span class="cb ok">✓</span><span>Same-thread email reply <b>not counted</b> as verification</span></li>
+        <li><span class="cb ${ready ? 'ok' : ''}">${ready ? '✓' : ''}</span><span>Supplier stated account ending <b>${esc(last4(p3.invoice.ending))}</b>, an exact match with the invoice</span></li>
+        <li><span class="cb ${ready ? 'ok' : ''}">${ready ? '✓' : ''}</span><span>Same rule re-run on the records${ready ? `: <span class="mono small">${esc(p3.result.rule_id)}</span> → <b style="color:var(--ok)">Ready for approval</b>` : ''}</span></li>
+      </ul></div>
+    <div class="dr"><div class="dtabs"><span>添付請求書</span><span class="cur">${mtag}通話ログ</span></div>
+      <div class="clog"><div class="src" style="margin-bottom:6px">15:44 · ${esc(p3.trusted_contact?.person || '')} · ${esc(p3.trusted_contact?.phone_masked || '')} (取引先マスタ) · 00:36 · simulated call</div>
+        ${lines.filter((l) => l.sp !== 'sys').map((l) => `<div class="ln ${l.key ? 'key' : ''}"><span class="ts">${l.ts}</span><span class="who ${l.sp === 'them' ? 'them' : ''}">${esc(l.who)}</span><span>${esc(l.ja)}<span class="en">${esc(l.en)}</span></span></div>`).join('')}</div></div></div></div>`;
+}
+
+function sCallLive() {
   const p3 = P('P3'), c = p3.trusted_contact;
   const lines = VOICE(p3.invoice_no, last4(p3.invoice.ending), c?.phone_masked || '');
   const ready = isReady(p3), logged = !!S.event && call.phase === 'idle', done = call.phase === 'ended' || logged;
@@ -852,7 +888,6 @@ function sCall() {
     <div>
       <div class="vlog"><div class="hd"><span><b>通話ログ · Voice log</b> <span class="muted">simulated call · Japanese with English subtitles</span></span><span class="muted mono">${S.event ? esc(S.event.event_id) : 'not started'}</span></div>
         <div class="lines" id="lines">${shown ? lines.slice(0, shown).map((l) => `<div class="ln ${l.sp === 'sys' ? 'sys' : ''} ${l.key ? 'key' : ''}"><span class="ts">${l.ts}</span><span class="who ${l.sp === 'them' ? 'them' : ''}">${l.sp === 'sys' ? 'System' : esc(l.who) + (l.sp === 'them' ? ' · Aoba' : ' · Minato')}</span><span>${esc(l.ja)}<span class="en">${esc(l.en)}</span></span></div>`).join('') : '<div class="ln sys"><span></span><span></span><span>Press <b>Replay callback confirmation</b> to place the call.</span></div>'}</div></div>
-      ${recordForm()}
       <ul class="checks">
         <li><span class="cb ${call.phase !== 'idle' || S.event ? 'ok' : ''}">${call.phase !== 'idle' || S.event ? '✓' : ''}</span><span>Called the number on the <b>vendor master</b>: ${esc(c?.phone_masked || '—')}</span></li>
         <li><span class="cb ok">✓</span><span>Same-thread email reply <b>not counted</b> as verification</span></li>
@@ -921,7 +956,8 @@ function render() {
   $('rail').innerHTML = STEPS.map((s) => `<li><button class="step ${s.mt ? 'mt' : ''} ${s.n === step ? 'on' : ''} ${s.n < maxStep ? 'done' : ''}" data-step="${s.n}" ${s.n > maxStep ? 'disabled' : ''} aria-current="${s.n === step ? 'step' : 'false'}"><span class="k"><span>${s.n} · ${esc(s.who)}</span></span><span class="t">${esc(s.t)}</span><span class="tool">${esc(s.tool)}</span></button></li>`).join('');
   const s = STEPS[step - 1];
   const nav = step === 1 && install === 'home' ? 'ホーム' : s.nav;
-  $('addr').textContent = `クラウド債務支払 · ${nav}${step === 3 ? ' · Matte' : ''}`;
+  const confirming = step === 3 && (call.phase === 'ended' || S.event);
+  $('addr').textContent = `クラウド債務支払 · ${nav}${confirming ? ' › AP4514' : step === 3 ? ' · Matte' : ''}`;
   $('when').textContent = s.when;
   $('appbar').innerHTML = appbar(nav);
   $('body').innerHTML = SCENES[step]();
