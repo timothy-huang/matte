@@ -477,6 +477,19 @@ table.mfgrid td.more{text-align:center;color:var(--muted);font-size:12px;backgro
 .clog{padding:10px 12px;max-height:520px;overflow:auto}
 .clog .ln{grid-template-columns:44px 48px 1fr}
 .dl .record{margin-top:6px}
+
+.heldrow2 td{background:#fafafa;color:var(--muted)}
+.approvebar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;border:1px solid var(--line);border-radius:6px;padding:10px 14px;background:#fff}
+.bankwin{max-width:720px;margin:6px auto 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.bankwin .bh{display:flex;justify-content:space-between;gap:8px;padding:9px 14px;background:#eef0f2;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.bankwin .bb{padding:14px 16px}
+.bok{color:var(--ok);font-weight:700;font-size:16px;margin-bottom:10px}
+.heldnote{max-width:720px;margin:10px auto 0;font-size:13px;color:var(--hold);background:var(--hold-soft);border:1px solid var(--hold);border-radius:6px;padding:8px 12px}
+.monday{max-width:720px;margin:14px auto 0;background:var(--ok);color:#fff;border-radius:10px;padding:18px 20px}
+.mdh{font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.85}
+.mdq{font-size:22px;font-weight:700;margin-top:6px}
+.mde{font-size:15px;opacity:.9}
+.mdf{margin-top:10px;font-size:13px;opacity:.95}
 </style>
 </head>
 <body>
@@ -558,6 +571,7 @@ const scanMs = () => scanT1 ? scanT1 - scanT0 : scan === 'running' ? performance
 let S = null, step = 1, maxStep = 1, revealed = false, busy = false, failArmed = failOnce, prevP3 = null, flipNow = false, runToken = 0;
 let install = 'home';             // home | list | consent | added
 let scan = 'idle', bootShown = 0, rowsChecked = 0; // scan: idle | running | done
+let approve = 'review'; // review | confirm | sent (step 4)
 let form = { digits: '', onFile: true, outcome: 'confirmed', msg: '', savedAt: '' };
 let msg = 'draft', view = 'list'; // view: list | detail | compare (step 2)                // draft | sent | replied
 let call = { phase: 'idle', shown: 0, secs: 0 }, audio = false;
@@ -568,7 +582,7 @@ const STEPS = [
   { n: 1, t: 'Home → add Matte', tool: 'ホーム › 連携サービス', who: 'Bookkeeper', when: 'Mon 10 Nov · 09:30', nav: '設定 › 連携サービス' },
   { n: 2, t: 'Scan payment requests', tool: '支払依頼 · Matte', who: 'Bookkeeper', mt: true, when: 'Fri 14 Nov · 15:40', nav: '経理業務 › 支払依頼 › 申請一覧' },
   { n: 3, t: 'Callback', tool: 'Matte · phone on file', who: 'Bookkeeper ↔ Supplier', mt: true, when: 'Fri 14 Nov · 15:44', nav: '経理業務 › 支払依頼 › 申請一覧' },
-  { n: 4, t: 'Approve & bank file', tool: '集計(支払処理)', who: 'Approver', when: 'Fri 14 Nov · 15:47', nav: '経理業務 › 支払依頼 › 集計(支払処理)' },
+  { n: 4, t: 'Approve & pay', tool: '集計(支払処理) → 銀行', who: 'Approver', when: 'Fri 14 Nov · 15:47', nav: '経理業務 › 支払依頼 › 集計(支払処理)' },
 ];
 
 const VOICE = (inv, end, phone) => [
@@ -900,16 +914,41 @@ function sCallLive() {
 
 // ---------- step 5: bank file ----------
 function sApprove() {
-  const ready = S.payments.filter(isReady), total = ready.reduce((a, p) => a + p.amount_jpy, 0);
+  const ready = S.payments.filter(isReady), held = S.payments.filter((p) => !isReady(p));
+  const total = ready.reduce((a, p) => a + p.amount_jpy, 0), heldTotal = held.reduce((a, p) => a + p.amount_jpy, 0);
+  if (approve === 'sent') return sPaid(ready, held, total);
   const rec = (p) => { const b = bank(p.invoice.bank); return `<td>2</td><td>${esc(b.ja)}</td><td>${esc(b.br)}</td><td>普通</td><td>****${esc(last4(p.invoice.ending))}</td><td class="n">${String(p.amount_jpy).padStart(10, '0')}</td><td>${esc(p.supplier_ja)}</td>`; };
-  return `${say('The approver sees what cleared and why. <b>P3 cleared. P2 is still held</b>, even though it\'s the same supplier: a callback confirms one exact account, not a whole vendor.')}
+  return `${say('Friday 15:47. <b>田中 (CFO)</b> opens the approval queue. P1 and P3 are ready; P3 shows the recorded callback. <b>P2 can\'t be selected</b>: Matte is still holding it.')}
   ${mfTabs('集計(支払処理)')}
-  <div class="mfband"></div><div class="tw"><table class="mfgrid"><thead><tr><th>申請番号</th><th>支払先</th><th class="n">合計金額</th><th>振込先</th><th>${mtag}</th></tr></thead><tbody>
-    ${S.payments.map((p) => `<tr class="${p.id === 'P3' && flipNow ? 'flip' : ''}"><td>${APNO[p.id]} <span class="muted small">(${p.id})</span></td><td>${esc(p.supplier_ja)}</td><td class="n">${en(p.amount_jpy)}</td><td>${esc(bank(p.invoice.bank).ja)} ••••${esc(last4(p.invoice.ending))}</td>
-      <td><span class="badge ${isReady(p) ? 'ok' : 'hold'}">${esc(p.result.status)}</span><div class="src">${esc(p.result.reason)}</div></td></tr>`).join('')}</tbody></table></div>
-  <div class="fb"><div class="hd"><span><b>全銀フォーマット振込データ (preview)</b> · ${ready.length} records · ${yen(total)}</span><span class="muted">Matte excludes held rows</span></div>
+  <div class="mfband"></div><div class="tw"><table class="mfgrid"><thead><tr><th><input type="checkbox" disabled checked></th><th>申請番号</th><th>支払先</th><th class="n">合計金額</th><th>振込先</th><th>${mtag}</th></tr></thead><tbody>
+    ${S.payments.map((p) => { const ok = isReady(p); const note = p.id === 'P3' && ok ? '<div class="src">✓ 折り返し確認済み · callback recorded 15:45 by 佐藤</div>' : `<div class="src">${esc(p.result.reason)}</div>`;
+      return `<tr class="${ok ? '' : 'heldrow2'} ${p.id === 'P3' && flipNow ? 'flip' : ''}"><td><input type="checkbox" disabled ${ok ? 'checked' : ''} title="${ok ? '' : 'Held by Matte'}"></td><td>${APNO[p.id]} <span class="muted small">(${p.id})</span></td><td>${esc(p.supplier_ja)}</td><td class="n">${en(p.amount_jpy)}</td><td>${esc(bank(p.invoice.bank).ja)} ••••${esc(last4(p.invoice.ending))}</td>
+      <td><span class="badge ${ok ? 'ok' : 'hold'}">${ok ? 'Ready for approval' : '保留 · Held by Matte'}</span>${note}</td></tr>`; }).join('')}</tbody></table></div>
+  <div class="fb"><div class="hd"><span><b>全銀フォーマット振込データ (preview)</b> · ${ready.length} records · ${en(total)}</span><span class="muted">Matte excludes held rows</span></div>
     <table class="zg mono"><tbody>${S.payments.map((p) => isReady(p) ? `<tr>${rec(p)}<td></td></tr>` : `<tr class="ex">${rec(p)}<td class="why">← held: ${esc(p.result.reason)}</td></tr>`).join('')}</tbody></table></div>
-  <div class="human"><span><b>田中 (CFO)</b> approves and uploads in the bank portal. That step stays human.</span><button disabled title="Outside the prototype">承認して送信 · Approve & send</button></div>`;
+  <div class="approvebar"><div><b>${ready.length}件 · ${en(total)}</b> を承認 <span class="muted small">· ${held.length}件 (${en(heldTotal)}) は Matte が保留中のため除外</span></div>
+    <button class="ok big" id="approveBtn">承認して振込 · Approve & pay</button></div>
+  ${approve === 'confirm' ? `<div class="modalwrap" role="dialog" aria-modal="true" aria-labelledby="payT"><div class="modal">
+    <div class="mh"><div><b id="payT">振込データを銀行に送信しますか？</b><div class="small muted">Send the bank file for ${ready.length} transfers?</div></div></div>
+    <ul class="scopes">${ready.map((p) => `<li><b>${esc(p.supplier_ja)} · ${en(p.amount_jpy)}</b><span>${esc(bank(p.invoice.bank).ja)} ${esc(bank(p.invoice.bank).br)} 普通 ••••${esc(last4(p.invoice.ending))}${p.id === 'P3' ? ' · confirmed by callback to the number on file' : ' · account unchanged'}</span></li>`).join('')}
+      <li><b>合計 ${en(total)}</b><span>Excluded: ${held.map((p) => `${APNO[p.id]} ${en(p.amount_jpy)} (held by Matte)`).join(', ')}</span></li></ul>
+    <div class="small muted" style="padding:0 16px 10px">承認者: 田中 (CFO). Simulated bank transfer for the demo; no money moves.</div>
+    <div class="mf"><button id="cancelPay">キャンセル</button><button class="ok" id="sendBank">承認して送信 · Approve & send</button></div>
+  </div></div>` : ''}`;
+}
+
+function sPaid(ready, held, total) {
+  return `${say('Paid before the 16:00 cut-off, to the <b>right</b> account. And on Monday morning, a very different phone call.')}
+  <div class="bankwin"><div class="bh"><b>オンラインバンキング · 総合振込</b><span class="muted small">Online banking · bulk transfer · simulated</span></div>
+    <div class="bb"><div class="bok">✓ 振込を受け付けました · Transfer accepted</div>
+      <table class="kv">${ready.map((p) => `<tr><th>${esc(p.supplier_ja)}</th><td>${esc(bank(p.invoice.bank).ja)} ••••${esc(last4(p.invoice.ending))} · <b>${en(p.amount_jpy)}</b>${p.id === 'P3' ? ' <span class="badge ok">callback confirmed</span>' : ''}</td></tr>`).join('')}
+        <tr><th>合計 · Total</th><td><b>${en(total)}</b> · ${ready.length}件</td></tr><tr><th>送信 · Sent</th><td>Fri 14 Nov 15:52 · 承認者 田中 (CFO)</td></tr><tr><th>受付番号</th><td class="mono">FB-20261114-0042</td></tr></table>
+      <div class="src" style="margin-top:8px">Simulated for the demo. Matte never moves money; the approver sent this from the bank portal.</div></div></div>
+  <div class="heldnote">${held.map((p) => `<b>${APNO[p.id]} (${p.id}) · ${en(p.amount_jpy)}</b> stays in the queue, held, until its own callback confirms the account.`).join(' ')}</div>
+  <div class="monday"><div class="mdh">MONDAY, 09:15 · 着信 アオバワークス 山田</div>
+    <div class="mdq">「ご入金を確認しました。いつもありがとうございます。」</div>
+    <div class="mde">"We received the payment. Thank you, as always."</div>
+    <div class="mdf">Same supplier, same hacked-inbox scenario, but this time the money went to the right account. <b>待って: no callback, no transfer.</b></div></div>`;
 }
 
 const SCENES = { 1: sIntegrations, 2: sInvoices, 3: sCall, 4: sApprove };
@@ -939,7 +978,8 @@ function bar() {
     else main = `<button class="ok big" id="markDone2" ${busy ? 'disabled' : ''}>${S.replay === 'failed' ? 'Retry' : '通話完了にする · Mark call complete'}</button>`;
     status = busy ? 'Checking confirmation…' : inCall ? 'Call in progress…' : S.replay === 'failed' ? 'Check unavailable · Retry' : ready ? `${p3.result.status} · ${p3.result.reason}` : ended ? 'Record what the supplier said, then mark the call complete' : (su.status !== 'ready' ? 'Verification rule unavailable' : '');
   }
-  if (step === 4) main = '<button id="restart">Replay the story</button>';
+  if (step === 4) main = approve === 'sent' ? '<button id="restart">Replay the story</button>' : approve === 'confirm' ? '' : '<button class="ok big" id="approveBtn2">承認して振込 · Approve & pay</button>';
+  if (step === 4 && approve === 'review') status = 'Approver: 田中 (CFO)';
   return `${back}<span class="status" role="status">${esc(status)}</span><span class="sp"></span>${extra}${main}`;
 }
 
@@ -959,15 +999,16 @@ function render() {
   const confirming = step === 3 && (call.phase === 'ended' || S.event);
   $('addr').textContent = `クラウド債務支払 · ${nav}${confirming ? ' › AP4514' : step === 3 ? ' · Matte' : ''}`;
   $('when').textContent = s.when;
-  $('appbar').innerHTML = appbar(nav);
+  $('appbar').innerHTML = step === 4 && approve === 'sent' ? '<span class="mfprod" style="border-color:#1a7f37">オンラインバンキング</span><span class="mfcrumb">総合振込 › 受付完了</span><span class="mfuser">ミナト食品株式会社 · 田中</span>' : appbar(nav);
+  if (step === 4 && approve === 'sent') $('addr').textContent = 'オンラインバンキング · 総合振込 (simulated)';
   $('body').innerHTML = SCENES[step]();
   $('bar').innerHTML = bar();
   const ln = $('lines'); if (ln) ln.scrollTop = ln.scrollHeight;
-  const pos = !revealed ? 0 : ready ? 2 : 1, pct = [0, 25, 50][pos];
+  const pos = approve === 'sent' ? 4 : !revealed ? 0 : ready ? 2 : 1, pct = [0, 25, 50, 75, 100][pos];
   $('coin').style.left = pct + '%'; $('fill').style.width = pct + '%';
-  $('coin').className = 'coin' + (pos === 1 ? ' hold' : pos === 2 ? ' ok' : '');
+  $('coin').className = 'coin' + (pos === 1 ? ' hold' : pos >= 2 ? ' ok' : '');
   [...$('stops').children].forEach((el, i) => el.classList.toggle('on', i === pos));
-  $('transferText').textContent = ['Queued in payment run', 'Needs verification · frozen', 'Ready for approval · stops at the human gate'][pos];
+  $('transferText').textContent = ['Queued in payment run', 'Needs verification · frozen', 'Ready for approval · waiting at the human gate', 'Approved', 'Approved by 田中 · sent to the bank (simulated)'][pos];
   renderEvidence(); bind();
   if (active && $(active) && !$(active).disabled) $(active).focus();
   flipNow = false;
@@ -1001,7 +1042,10 @@ function bind() {
   on('openP3', openDetail); on('openP3b', openDetail); on('compareBtn', openCompare); on('compareBtn2', openCompare);
   on('closeDetail', () => { view = 'list'; render(); });
   on('sendMsg', sendMsg);
-  on('replay', replay); on('startCall', startCall); on('markDone', replay); on('markDone2', replay);
+  on('replay', replay);
+  on('approveBtn', () => { approve = 'confirm'; render(); $('sendBank')?.focus(); }); on('approveBtn2', () => { approve = 'confirm'; render(); $('sendBank')?.focus(); });
+  on('cancelPay', () => { approve = 'review'; render(); });
+  on('sendBank', () => { approve = 'sent'; render(); }); on('startCall', startCall); on('markDone', replay); on('markDone2', replay);
   on('fillDigits', () => { form.digits = last4(P('P3').invoice.ending); form.msg = ''; render(); });
   if ($('digits')) $('digits').oninput = (e) => { form.digits = e.target.value.replace(/\D/g, '').slice(0, 4); e.target.value = form.digits; };
   if ($('onFile')) $('onFile').onchange = (e) => { form.onFile = e.target.checked; };
@@ -1084,7 +1128,7 @@ async function replay() {
 
 function hardReset() {
   runToken++; step = maxStep = 1; revealed = busy = false; prevP3 = null; failArmed = failOnce;
-  install = 'home'; view = 'list'; scan = 'idle'; bootShown = 0; rowsChecked = 0; msg = 'draft'; scanT0 = scanT1 = 0;
+  approve = 'review'; install = 'home'; view = 'list'; scan = 'idle'; bootShown = 0; rowsChecked = 0; msg = 'draft'; scanT0 = scanT1 = 0;
   call = { phase: 'idle', shown: 0, secs: 0 }; form = { digits: '', onFile: true, outcome: 'confirmed', msg: '', savedAt: '' };
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   $('evidence').open = false; $('modelInputs').open = false; $('sigInputs').open = false;
@@ -1097,6 +1141,7 @@ function poll() { clearInterval(pollTimer); pollTimer = setInterval(async () => 
 $('reset').onclick = async () => { S = (await api('/api/reset', {})).data; hardReset(); render(); };
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && install === 'consent') { install = 'list'; render(); return; }
+  if (e.key === 'Escape' && approve === 'confirm') { approve = 'review'; render(); return; }
   if (e.target.closest('input,textarea,summary,pre')) return;
   if (e.key === 'ArrowRight' && step < maxStep) go(step + 1);
   if (e.key === 'ArrowLeft' && step > 1) go(step - 1);
@@ -1111,6 +1156,7 @@ document.addEventListener('keydown', (e) => {
     if (jump >= 3) { view = 'compare'; scan = 'done'; bootShown = 4; rowsChecked = BATCH_N; revealed = true; scanT0 = 0; scanT1 = 8400; }
     maxStep = jump;
     if ((jump === 4 || params.has('call')) && S.setup.status === 'ready') { step = 3; maxStep = Math.max(maxStep, 3); go(3); await startCall(); if (params.get('call') !== 'form') { form.digits = last4(P('P3').invoice.ending); await replay(); } }
+    if (jump === 4 && params.get('pay')) approve = params.get('pay');
     go(jump);
     if (jump === 2 && params.get('view')) { view = params.get('view'); render(); }
     if (jump === 2 && params.has('scan')) runScan().then(() => { if (params.has('roadmap')) document.querySelector('.roadmap')?.setAttribute('open', ''); });
