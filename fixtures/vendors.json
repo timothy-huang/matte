@@ -1,0 +1,4 @@
+[
+  { "id": "V-KUMO", "name": "Kumo Supplies", "verified_destination": "JP-MUFG-001-A-1001", "trusted_contact_ref": "TC-KUMO-01" },
+  { "id": "V-AOBA", "name": "Aoba Works", "verified_destination": "JP-SMBC-204-A-2002", "trusted_contact_ref": "TC-AOBA-01" }
+]

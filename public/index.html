@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wrong Account</title>
+<style>
+:root{
+  --bg:#f3efe6;--paper:#fffdf8;--ink:#1c1a17;--muted:#6e675c;--line:#d9d1c2;--frame:#1c1a17;
+  --hold:#b8430c;--hold-bg:#fbe6d8;--ok:#1b7a47;--ok-bg:#dff3e7;--accent:#2848c9;--accent-bg:#e4e9fb;--hl:#ffd966;
+  --mail:#f7f4ee;--phone:#16161a;--shadow:0 1px 0 var(--line),0 8px 24px -14px rgba(40,30,10,.35)
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121214;--paper:#1c1c20;--ink:#ecebe7;--muted:#9c978d;--line:#34333a;--frame:#5a5862;
+  --hold:#ff9f6e;--hold-bg:#3b2116;--ok:#62d69a;--ok-bg:#15301f;--accent:#93a6ff;--accent-bg:#1f2547;--hl:#6d5410;--mail:#232328;--phone:#0b0b0d;--shadow:0 8px 24px -14px #000}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 ui-sans-serif,system-ui,-apple-system,"Hiragino Sans",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+button{font:inherit;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:9px 15px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:650}
+button.go{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:650}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mono{font-family:ui-monospace,Menlo,monospace}
+.muted{color:var(--muted)}
+mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
+
+/* header */
+header{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-size:21px;margin:0;letter-spacing:-.02em}
+.brand span{color:var(--muted);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;font-size:12px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.chip b{color:var(--ink);font-weight:600}
+
+/* storyboard rail = workflow map */
+.rail{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:0 0 16px;padding:0;list-style:none;counter-reset:f}
+.rail li{position:relative}
+.rail li:not(:last-child)::after{content:"";position:absolute;top:50%;right:-10px;width:10px;height:2px;background:var(--line)}
+.thumb{width:100%;text-align:left;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);display:grid;gap:3px;min-height:86px}
+.thumb .n{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.thumb .t{font-weight:650;font-size:14px;line-height:1.25}
+.thumb .who{font-size:12px;color:var(--muted)}
+.thumb.wa{border-style:dashed}
+.thumb.on{border-color:var(--frame);box-shadow:var(--shadow);transform:translateY(-2px)}
+.thumb.done .n::after{content:"✓";color:var(--ok)}
+.thumb:disabled{opacity:.5}
+.tag-wa{font-size:10px;background:var(--accent-bg);color:var(--accent);border-radius:4px;padding:0 5px;font-weight:700;letter-spacing:.02em;text-transform:none}
+@media (max-width:820px){.rail{grid-template-columns:repeat(5,minmax(120px,1fr));overflow-x:auto;padding-bottom:6px}}
+
+/* stage */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage{background:var(--paper);border:2px solid var(--frame);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.caption{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between;padding:12px 18px;border-bottom:2px solid var(--frame);background:var(--bg)}
+.caption .when{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.caption h2:focus{outline:none}
+.caption h2{margin:0;font-size:19px;letter-spacing:-.01em}
+.scene{padding:18px;min-height:380px;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.narration{font-size:17px;line-height:1.5;margin:0 0 14px;max-width:62ch}
+.narration b{font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 18px;border-top:1px solid var(--line)}
+.actions .spacer{flex:1}
+.status{font-size:14px;color:var(--muted)}
+
+/* mail mock */
+.mail{background:var(--mail);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mail-h{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.msg{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:36px 1fr;gap:10px}
+.msg:last-child{border-bottom:0}
+.av{width:36px;height:36px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:grid;place-items:center;font-weight:700}
+.msg .from{font-size:13px}.msg .from b{font-size:14px}
+.msg p{margin:6px 0 0}
+.attach{display:inline-flex;gap:8px;align-items:center;margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--paper);font-size:13px}
+.flagnote{display:inline-block;margin-top:8px;font-size:12px;background:var(--hold-bg);color:var(--hold);border-radius:5px;padding:2px 7px;font-weight:600}
+
+/* invoices */
+.invs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.invs{grid-template-columns:1fr}}
+.inv{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;position:relative;box-shadow:var(--shadow)}
+.inv .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.inv .co{font-weight:700;margin-top:6px}
+.inv .amt{font-size:30px;font-weight:750;margin:6px 0 4px;letter-spacing:-.02em}
+.inv dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:8px 0 0;font-size:14px}
+.inv dt{color:var(--muted)}.inv dd{margin:0}
+.stamp{position:absolute;top:12px;right:12px;border:2px solid var(--ok);color:var(--ok);font-weight:800;font-size:12px;padding:2px 8px;border-radius:5px;transform:rotate(6deg);letter-spacing:.06em}
+.stamp.hold{border-color:var(--hold);color:var(--hold)}
+.revealed .diff{background:var(--hl);border-radius:4px;padding:0 4px;font-weight:800;animation:pulse 1.2s ease 2}
+@keyframes pulse{50%{box-shadow:0 0 0 4px var(--hl)}}
+.bigq{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:16px 0 0;text-align:center}
+
+/* signals + evidence mini */
+.signals{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.sig{font-size:13px;border-radius:6px;padding:4px 9px;background:var(--hold-bg);color:var(--hold);font-weight:600}
+.sig.ok{background:var(--ok-bg);color:var(--ok)}
+.why{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:6px}
+@media (max-width:640px){.why{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg)}
+.box h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.box blockquote{margin:0;font-size:14px;line-height:1.5}
+.src{font-size:12px;color:var(--muted);margin-top:6px}
+.src a{color:inherit}
+.rulechips{display:flex;flex-wrap:wrap;gap:5px}
+.rc{font-size:12px;border-radius:5px;padding:2px 7px;background:var(--accent-bg);color:var(--accent);font-weight:600}
+.testok{color:var(--ok);font-weight:700;margin:8px 0 0;font-size:14px}.testbad{color:var(--hold);font-weight:700;margin:8px 0 0}
+
+/* phone */
+.callgrid{display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:start}
+@media (max-width:640px){.callgrid{grid-template-columns:1fr}}
+.phone{background:var(--phone);color:#f4f4f6;border-radius:30px;padding:14px;border:6px solid #2a2a30;min-height:320px;display:flex;flex-direction:column;gap:8px}
+.phone .notch{width:80px;height:6px;border-radius:3px;background:#2a2a30;margin:0 auto 8px}
+.phone .callee{text-align:center;padding:6px 0 4px}
+.phone .callee b{display:block;font-size:16px}
+.phone .num{font-family:ui-monospace,Menlo,monospace;font-size:20px;letter-spacing:.04em;margin-top:4px}
+.phone .srcl{font-size:11px;color:#9aa7ff;margin-top:2px}
+.phone .state{text-align:center;font-size:12px;color:#b9b9c2;margin:2px 0 6px}
+.bub{max-width:88%;border-radius:14px;padding:7px 11px;font-size:13px;line-height:1.35;animation:fadein .4s ease both}
+.bub.me{align-self:flex-end;background:#3550d8}
+.bub.them{align-self:flex-start;background:#2c2c33}
+.bub:nth-child(n+2){animation-delay:.25s}
+.dots::after{content:"…";animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checklist li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:14px}
+.ck{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;background:var(--line);color:var(--muted)}
+.ck.ok{background:var(--ok);color:#fff}.ck.no{background:var(--hold);color:#fff}
+.strike{text-decoration:line-through;color:var(--muted)}
+.sim{display:inline-block;font-size:11px;border:1px dashed var(--muted);color:var(--muted);border-radius:4px;padding:1px 6px;margin-left:6px}
+
+/* approver queue */
+.queue{display:grid;gap:10px}
+.qrow{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.qrow.flip{animation:flash 1.8s ease}
+@keyframes flash{0%{background:var(--hl)}100%{background:var(--paper)}}
+.qrow .pid{font-weight:800;font-size:15px;text-align:center;border-radius:8px;padding:8px 0;background:var(--bg)}
+.qrow .sup{font-weight:650}.qrow .meta{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;border-radius:6px;padding:3px 9px;font-size:13px;font-weight:700;white-space:nowrap}
+.badge.hold{background:var(--hold-bg);color:var(--hold)}.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.approver{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:2px dashed var(--line);border-radius:12px;padding:12px 14px}
+
+/* side column */
+.side{display:grid;gap:14px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.panel h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.ledger{width:100%;border-collapse:collapse;font-size:13px}
+.ledger td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.ledger tr:last-child td{border-bottom:0}
+.ledger .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ledger tr.cur td{background:var(--accent-bg)}
+.ledger tr.flip td{animation:flash 1.8s ease}
+.ledger .r{font-size:12px;color:var(--muted)}
+.where{list-style:none;margin:0;padding:0;font-size:13px;display:grid;gap:4px}
+.where li{display:flex;gap:8px;align-items:center}
+.where li.me{font-weight:700;color:var(--accent)}
+.where .dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.where li.me .dot{background:var(--accent)}
+
+/* transfer strip */
+.transfer{margin-top:16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px 12px}
+.transfer h3{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.track{position:relative;height:6px;background:var(--line);border-radius:3px;margin:22px 10% 0}
+.track .fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--accent);transition:width 1.4s cubic-bezier(.3,.7,.2,1)}
+.coin{position:absolute;top:-15px;width:36px;height:36px;margin-left:-18px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;transition:left 1.4s cubic-bezier(.3,.7,.2,1),background .3s;box-shadow:0 4px 10px -4px rgba(0,0,0,.4)}
+.coin.hold{background:var(--hold)}.coin.ok{background:var(--ok)}
+.gate{position:absolute;top:-16px;left:75%;width:4px;height:38px;margin-left:-2px;background:repeating-linear-gradient(var(--ink) 0 5px,transparent 5px 9px)}
+.stops{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;font-size:12px;margin-top:18px;color:var(--muted)}
+.stops .on{color:var(--ink);font-weight:750}
+@media (prefers-reduced-motion:reduce){.coin,.track .fill{transition:none}.scene,.bub,.qrow.flip,.ledger tr.flip td,.revealed .diff{animation:none}}
+
+/* evidence drawer */
+details.ev{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:16px}
+details.ev summary{cursor:pointer;font-weight:700}
+details.ev details{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:10px}
+details summary{cursor:pointer;font-weight:650}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+.pred{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;margin:2px 0}
+pre{white-space:pre-wrap;word-break:break-word;font-size:12px;background:var(--paper);padding:10px;border-radius:8px;max-height:420px;overflow:auto;border:1px solid var(--line)}
+.trace{font-family:ui-monospace,Menlo,monospace;font-size:12px;list-style:none;padding:0;margin:8px 0}
+.trace li{padding:3px 0;border-bottom:1px dashed var(--line)}
+.trace .st{color:var(--accent);display:inline-block;min-width:68px}
+.banner{background:var(--hold-bg);color:var(--hold);padding:10px 14px;border-radius:10px;margin:0 0 12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.banner.wait{background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand"><h1>Wrong Account</h1><span>Friday payment run · synthetic demo</span></div>
+    <div class="chips" id="chips" aria-label="What actually ran"></div>
+    <button id="reset">Reset demo</button>
+  </header>
+
+  <div id="setupBanner"></div>
+
+  <nav aria-label="Storyboard"><ol class="rail" id="rail"></ol></nav>
+
+  <div class="layout">
+    <section class="stage" aria-live="polite">
+      <div class="caption"><h2 id="sceneTitle"></h2><span class="when" id="sceneWhen"></span></div>
+      <div class="scene" id="scene"></div>
+      <div class="actions" id="actions"></div>
+    </section>
+
+    <aside class="side">
+      <div class="panel">
+        <h3>Payment batch · Fri 14 Nov</h3>
+        <table class="ledger" id="ledger"></table>
+      </div>
+      <div class="panel">
+        <h3>Where Wrong Account sits</h3>
+        <ul class="where" id="where"></ul>
+      </div>
+    </aside>
+  </div>
+
+  <section class="transfer" aria-label="Transfer for P3">
+    <h3><span>P3 transfer · ¥480,000 → Aoba Works</span><span id="transferText" role="status"></span></h3>
+    <div class="track"><div class="fill" id="fill"></div><div class="gate" title="Human approval gate"></div><div class="coin" id="coin" aria-hidden="true">¥</div></div>
+    <div class="stops" id="stops"><div>Payment run</div><div>Needs verification</div><div>Ready for approval</div><div>Human approval</div><div>Bank</div></div>
+  </section>
+
+  <details class="ev" id="evidence">
+    <summary>Evidence: source, rule, tests, model inputs, trace</summary>
+    <div class="grid2">
+      <div><h3 class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.06em">Bank guidance</h3><div id="guidance"></div></div>
+      <div><h3 class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.06em">Trusted-callback rule</h3><div id="rule"></div><div id="tests"></div></div>
+    </div>
+    <div id="callbackEv"></div>
+    <details id="modelInputs"><summary>Model inputs</summary><div id="modelBody"></div></details>
+    <details><summary>Trace</summary><ul class="trace" id="trace"></ul></details>
+  </details>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const yen = (n) => '¥' + n.toLocaleString('en-US');
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const failOnce = new URLSearchParams(location.search).has('fail');
+
+let S = null, step = 1, maxStep = 1, revealed = false, busy = false, failArmed = failOnce, prevP3 = null, flipNow = false;
+
+const FRAMES = [
+  { n: 1, t: 'Supplier emails', who: 'Supplier → Bookkeeper', when: 'Thu 13 Nov · 17:12', title: 'A routine thread gets one extra reply' },
+  { n: 2, t: 'Friday payment run', who: 'Bookkeeper', when: 'Fri 14 Nov · 15:40', title: 'Would you pay it?' },
+  { n: 3, t: 'Change flagged', who: 'Wrong Account', wa: true, when: 'Fri · 15:41', title: 'Destination changed → held' },
+  { n: 4, t: 'Call the number on file', who: 'Bookkeeper ↔ Supplier', when: 'Fri · 15:44', title: 'Verify by callback, not by reply' },
+  { n: 5, t: 'Approver queue', who: 'Approver', when: 'Fri · 15:47', title: 'Only the confirmed payment moves on' },
+];
+const WHERE = ['Supplier email & invoices', 'Accounting system → payment batch', 'Wrong Account check', 'Callback to number on file', 'Human approver', 'Bank upload'];
+const WHERE_AT = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 };
+
+async function api(path, body) {
+  const r = await fetch(path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : {});
+  return { status: r.status, data: await r.json() };
+}
+
+const P = (id) => S.payments.find((p) => p.id === id);
+const isReady = (p) => p.result.status === 'Ready for approval';
+const last4 = (masked) => String(masked).slice(-4);
+
+function go(n) { step = n; maxStep = Math.max(maxStep, n); if (n >= 3) revealed = true; render(); $('sceneTitle').focus?.(); }
+
+// ---------- scenes ----------
+function sceneInbox() {
+  const p3 = P('P3');
+  return `<p class="narration">Aoba Works sends invoices every month. This time, a reply lands in <b>the same thread, from their usual address</b>: they've changed banks.</p>
+  <div class="mail" role="img" aria-label="Email thread from Aoba Works">
+    <div class="mail-h"><span>Inbox · accounts@yourfirm.example</span><span>Thread · 2 messages</span></div>
+    <div class="msg"><div class="av">AW</div><div>
+      <div class="from"><b>Sato · Aoba Works</b> <span class="muted">&lt;billing@aoba-works.example&gt; · Thu 10:03</span></div>
+      <p>Hello, please find invoice ${esc(p3.invoice_no)} for November attached. Thank you as always.</p>
+      <span class="attach">📄 ${esc(p3.invoice_no)}.pdf · ${yen(p3.amount_jpy)}</span></div></div>
+    <div class="msg"><div class="av">AW</div><div>
+      <div class="from"><b>Sato · Aoba Works</b> <span class="muted">&lt;billing@aoba-works.example&gt; · Thu 17:12</span></div>
+      <p>Quick note: we've moved banks. Please pay ${esc(p3.invoice_no)} (and AW-2611-031) to our new account, details on the updated invoice. Call me on 050-••••-7731 with any questions.</p>
+      <span class="flagnote">Same thread · same sender address</span></div></div>
+  </div>
+  <p class="muted" style="margin-top:12px;font-size:14px">Real pattern: Japan's IPA documented a payment sent to fraudsters after exactly this kind of request came from a supplier's <i>genuine, compromised</i> inbox.</p>`;
+}
+
+function invoiceCard(label, p, side, stamp) {
+  const acct = side === 'old' ? p.on_file : p.invoice;
+  const inv = side === 'old' ? p.invoice_no.replace(/(\d+)$/, (m) => String(+m - 5).padStart(m.length, '0')) : p.invoice_no;
+  return `<article class="inv">${stamp || ''}<div class="lbl">${label}</div><div class="co">${esc(p.supplier)}</div>
+    <div class="amt">${yen(p.amount_jpy)}</div>
+    <dl><dt>Invoice</dt><dd>${esc(inv)}</dd><dt>Pay to</dt><dd class="mono">${esc(acct.bank)} ••• <span class="diff">${esc(last4(acct.ending))}</span></dd>
+    <dt>Due</dt><dd>${side === 'old' ? 'Fri 31 Oct' : 'Fri 14 Nov'}</dd></dl></article>`;
+}
+
+function sceneRun() {
+  const p3 = P('P3');
+  return `<p class="narration">Friday afternoon. The batch is ready to export to the bank. Last month's invoice and this one look the same: <b>same supplier, same amount, same template.</b></p>
+  <div class="invs">${invoiceCard('Last month · paid', p3, 'old', '<span class="stamp">PAID</span>')}${invoiceCard('This week · ' + p3.id, p3, 'new')}</div>
+  <p class="bigq">Would you pay it?</p>`;
+}
+
+function evidenceMini() {
+  const su = S.setup, g = su.guidance, t = su.tests;
+  const q = g ? esc(g.excerpt).match(/[^.]*hacked the sender[^.]*\.|[^.]*known contact[^.]*\./gi) : null;
+  const short = q ? q.join(' ').replace(/(known contact in the company directly, using contact details held on record)/i, '<mark>$1</mark>') : '';
+  const chips = { 'callback.payment_id': 'same payment', 'callback.vendor_id': 'same vendor', 'callback.confirmed_destination': 'exact new account', 'callback.contact_ref': 'number on file', 'callback.method': 'by callback', 'callback.outcome': 'confirmed' };
+  return `<div class="why">
+    <div class="box"><h3>Why a reply isn't enough</h3>${g ? `<blockquote>“${short}”</blockquote><div class="src"><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.title)}</a> · ${esc(g.retrieved_via)}</div>` : '<p class="muted">Guidance unavailable.</p>'}</div>
+    <div class="box"><h3>Rule that clears it</h3>${su.rule ? `<div class="rulechips">${su.rule.all.map((p) => `<span class="rc">${chips[p.left] || esc(p.left)}</span>`).join('')}</div>
+      <div class="src mono">${esc(su.rule.id)}</div>` : '<p class="muted">Verification rule unavailable.</p>'}
+      ${t ? `<p class="${t.passed ? 'testok' : 'testbad'}">${t.passed ? '✓ Test passed · email reply alone stays held' : 'Tests failed'}</p>` : ''}
+      <button id="openEv" style="margin-top:8px;padding:5px 10px;font-size:13px">Open evidence & model inputs</button></div>
+  </div>`;
+}
+
+function sceneFlag() {
+  const p3 = P('P3');
+  return `<p class="narration">Before export, Wrong Account compares each invoice's destination with the <b>verified account on file</b>. P3 doesn't match, so it's held.</p>
+  <div class="invs revealed">${invoiceCard('On file · verified', p3, 'old', '<span class="stamp">ON FILE</span>')}${invoiceCard('Invoice ' + p3.id, p3, 'new', '<span class="stamp hold">HELD</span>')}</div>
+  <div class="signals">
+    <span class="sig">Account changed ${esc(last4(p3.on_file.ending))} → ${esc(last4(p3.invoice.ending))}</span>
+    <span class="sig">Supplier replied in the same thread</span>
+    <span class="sig">${isReady(p3) ? 'Trusted callback confirmed' : 'Trusted callback pending'}</span>
+  </div>
+  ${evidenceMini()}`;
+}
+
+function sceneCall() {
+  const p3 = P('P3'), su = S.setup;
+  const contact = p3.trusted_contact;
+  const ready = isReady(p3);
+  const checking = busy || S.replay === 'checking';
+  const failed = S.replay === 'failed' && !checking;
+  const e = S.event;
+  const bubbles = ready && e ? `
+    <div class="bub me">Hi, this is accounts at your client. Calling the number we have on file.</div>
+    <div class="bub them">Yes, this is Aoba Works accounts.</div>
+    <div class="bub me">Can you confirm the new account for invoice ${esc(p3.invoice_no)}?</div>
+    <div class="bub them">Confirmed: ${esc(p3.invoice.bank)} account ending ${esc(e.confirmed_ending)}.</div>` :
+    checking ? `<div class="state dots">Checking confirmation</div>` :
+    failed ? `<div class="state" style="color:#ffb38f">Check unavailable · Retry</div>` :
+    `<div class="state">Ready to call · not the number in the email</div>`;
+  const ck = (ok, txt, pend) => `<li><span class="ck ${ok ? 'ok' : pend ? '' : 'no'}">${ok ? '✓' : pend ? '·' : '✗'}</span><span>${txt}</span></li>`;
+  return `<p class="narration">The fix isn't another email. Call the supplier on the <b>number already on file</b> and have them confirm the <b>exact new account</b>.</p>
+  <div class="callgrid">
+    <div class="phone" role="img" aria-label="Phone call to the number on file">
+      <div class="notch"></div>
+      <div class="callee"><b>${esc(contact?.label || 'No trusted contact on file')}</b>
+        <div class="num">${esc(contact?.phone_masked || '—')}</div>
+        <div class="srcl">from vendor record · not from email</div></div>
+      ${bubbles}
+    </div>
+    <div>
+      <ul class="checklist">
+        ${ck(true, `Number from the <b>vendor record</b>: ${esc(contact?.phone_masked || '—')}`)}
+        <li><span class="ck no">✗</span><span><span class="strike">050-••••-7731</span> from the email: <b>not used</b></span></li>
+        ${ck(ready, `Supplier confirmed account ending <b>${esc(last4(p3.invoice.ending))}</b>`, !ready)}
+        ${ck(ready, `Same rule re-run on the record side${ready ? `: <span class="mono">${esc(p3.result.rule_id)}</span>` : ''}`, !ready)}
+      </ul>
+      <p class="muted" style="font-size:13px;margin-top:10px">Simulated callback <span class="sim">demo</span>. One preset event per run, reused on retry.${su.status !== 'ready' ? ' <b>Verification rule unavailable, so replay is disabled.</b>' : ''}</p>
+    </div>
+  </div>`;
+}
+
+function sceneQueue() {
+  const rows = S.payments.map((p) => {
+    const ok = isReady(p);
+    const note = p.id === 'P2' ? 'Same supplier, different account (8088). Still needs its own callback.' : p.id === 'P3' ? 'Callback confirmed the exact account.' : 'Destination unchanged.';
+    return `<div class="qrow ${p.id === 'P3' && flipNow ? 'flip' : ''}"><div class="pid">${p.id}</div>
+      <div><div class="sup">${esc(p.supplier)} · ${yen(p.amount_jpy)}</div><div class="meta">${esc(last4(p.on_file.ending))} → ${esc(last4(p.invoice.ending))} · ${note}</div></div>
+      <div><span class="badge ${ok ? 'ok' : 'hold'}">${esc(p.result.status)}</span><div class="meta" style="text-align:right">${esc(p.result.reason)}</div></div></div>`;
+  }).join('');
+  const total = S.payments.filter(isReady).reduce((a, p) => a + p.amount_jpy, 0);
+  return `<p class="narration">The approver sees what cleared and why. <b>P3 flipped. P2 is still held</b>, even though it's the same supplier: a callback confirms one exact account, not a whole vendor.</p>
+  <div class="queue">${rows}</div>
+  <div class="approver"><span><b>${yen(total)}</b> ready for approval · held rows excluded from the bank export</span>
+    <button disabled title="Human decision: outside the prototype">Approve & export (human)</button></div>`;
+}
+
+const SCENES = { 1: sceneInbox, 2: sceneRun, 3: sceneFlag, 4: sceneCall, 5: sceneQueue };
+
+function actions() {
+  const su = S.setup, p3 = P('P3');
+  const ready = isReady(p3);
+  const back = step > 1 ? `<button id="back">← Back</button>` : '';
+  let main = '', status = '';
+  if (step === 1) main = `<button class="primary" id="next">Friday's payment run →</button>`;
+  if (step === 2) main = `<button class="primary" id="reveal">Reveal change</button>`;
+  if (step === 3) main = `<button class="primary" id="next">Call the number on file →</button>`;
+  if (step === 4) {
+    const checking = busy || S.replay === 'checking';
+    if (ready) main = `<button class="go" id="next">Send to approver →</button>`;
+    else main = `<button class="primary" id="replay" ${su.status !== 'ready' || !su.rule || checking ? 'disabled' : ''}>${S.replay === 'failed' ? 'Retry' : 'Replay callback confirmation'}</button>`;
+    status = checking ? 'Checking confirmation…' : S.replay === 'failed' ? 'Check unavailable · Retry' : ready ? `${p3.result.status} · ${p3.result.reason}` : '';
+  }
+  if (step === 5) main = `<button id="restart">Replay the story</button>`;
+  return `${back}<span class="status" role="status">${esc(status)}</span><span class="spacer"></span>${main}`;
+}
+
+// ---------- render ----------
+function render() {
+  if (!S) return;
+  const active = document.activeElement?.id;
+  const su = S.setup, p3 = P('P3');
+  const ready = isReady(p3);
+  if (prevP3 && prevP3 !== p3.result.status) flipNow = true;
+  prevP3 = p3.result.status;
+
+  $('chips').innerHTML = [['Source', su.partners.tavily], ['Rule', su.partners.model], ['Records', su.partners.runner], ['Rule ID', su.rule?.id || '—']]
+    .map(([k, v]) => `<span class="chip">${k}: <b>${esc(v)}</b></span>`).join('');
+
+  $('setupBanner').innerHTML = su.status === 'failed'
+    ? `<div class="banner"><span>${esc(su.error || 'Check setup failed.')} Changed payments stay held.</span><button id="retrySetup">Retry check setup</button></div>`
+    : su.status === 'pending' ? `<div class="banner wait">Setting up the check: retrieving guidance, building and testing the rule…</div>` : '';
+
+  $('rail').innerHTML = FRAMES.map((f) => `<li><button class="thumb ${f.wa ? 'wa' : ''} ${f.n === step ? 'on' : ''} ${f.n < maxStep || (f.n === 5 && maxStep === 5) ? 'done' : ''}" data-step="${f.n}" ${f.n > maxStep ? 'disabled' : ''} aria-current="${f.n === step ? 'step' : 'false'}">
+      <span class="n"><span>Frame ${f.n}</span></span><span class="t">${esc(f.t)}</span><span class="who">${f.wa ? '<span class="tag-wa">Wrong Account</span>' : esc(f.who)}</span></button></li>`).join('');
+
+  const f = FRAMES[step - 1];
+  $('sceneTitle').textContent = f.title;
+  $('sceneTitle').tabIndex = -1;
+  $('sceneWhen').textContent = f.when;
+  $('scene').innerHTML = SCENES[step]();
+  $('actions').innerHTML = actions();
+
+  // ledger
+  $('ledger').innerHTML = S.payments.map((p) => {
+    const ok = isReady(p);
+    const showChange = revealed && p.changed;
+    return `<tr class="${p.id === 'P3' && step >= 2 ? 'cur' : ''} ${p.id === 'P3' && flipNow ? 'flip' : ''}"><td><b>${p.id}</b><br><span class="r">${esc(p.supplier)}</span></td>
+      <td class="amt">${yen(p.amount_jpy)}<br><span class="r mono">${esc(last4(p.on_file.ending))}→${showChange ? `<b>${esc(last4(p.invoice.ending))}</b>` : esc(last4(p.invoice.ending))}</span></td>
+      <td>${revealed || !p.changed ? `<span class="badge ${ok ? 'ok' : 'hold'}">${ok ? 'Ready' : 'Held'}</span><br><span class="r">${esc(p.result.reason)}</span>` : '<span class="r">Not yet checked</span>'}</td></tr>`;
+  }).join('');
+
+  $('where').innerHTML = WHERE.map((w, i) => `<li class="${WHERE_AT[step] === i ? 'me' : ''}"><span class="dot"></span>${i === 2 ? '<b>' + esc(w) + '</b>' : esc(w)}</li>`).join('');
+
+  // transfer
+  const pos = !revealed ? 0 : ready ? 2 : 1;
+  const pct = [0, 25, 50][pos];
+  $('coin').style.left = pct + '%';
+  $('fill').style.width = pct + '%';
+  $('coin').className = 'coin' + (pos === 1 ? ' hold' : pos === 2 ? ' ok' : '');
+  [...$('stops').children].forEach((el, i) => el.classList.toggle('on', i === pos));
+  $('transferText').textContent = ['Payment run', 'Needs verification · frozen', 'Ready for approval · stops at the human gate'][pos];
+
+  renderEvidence();
+  bind();
+  if (active && $(active) && !$(active).disabled) $(active).focus();
+  flipNow = false;
+}
+
+function renderEvidence() {
+  const su = S.setup, g = su.guidance;
+  $('guidance').innerHTML = g ? `<blockquote style="margin:6px 0;padding:8px 12px;border-left:3px solid var(--accent);background:var(--bg);border-radius:4px;font-size:14px">${esc(g.excerpt).replace(/(contacting a known contact[^.]*\.|do not accept changes requested by email without verifying it first directly)/gi, '<mark>$1</mark>')}</blockquote>
+    <div class="src"><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.title)}</a> · ${esc(g.retrieved_via)} · ${esc(g.retrieved_at)}</div>` : '<p class="muted">No guidance retrieved.</p>';
+  $('rule').innerHTML = su.rule ? `<div class="src">${esc(su.rule.id)} · implements “verify … using contact details held on record”</div>` +
+    su.rule.all.map((p) => `<div class="pred">${esc(p.left)} == ${esc(p.field || JSON.stringify(p.value))}</div>`).join('') : '<p class="muted">Verification rule unavailable.</p>';
+  const t = su.tests;
+  $('tests').innerHTML = t ? `<p class="${t.passed ? 'testok' : 'testbad'}">${t.passed ? 'Test passed · email reply alone stays held' : 'Tests failed'} (${t.cases.filter((c) => c.pass).length}/${t.cases.length})</p>
+    ${t.cases.map((c) => `<div class="pred">${c.pass ? '✓' : '✗'} ${esc(c.name)} → ${esc(c.got)}</div>`).join('')}` : '';
+  $('callbackEv').innerHTML = S.event ? `<h3 class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-top:14px">Callback event</h3><div class="pred">${esc(S.event.event_id)} · method ${esc(S.event.method)} · outcome ${esc(S.event.outcome)} · ${esc(S.event.contact.label)} ${esc(S.event.contact.phone_masked)} · confirmed ending ${esc(S.event.confirmed_ending)}</div>` : '';
+  const reqs = su.model_requests || [];
+  $('modelBody').innerHTML = `<p class="muted" style="font-size:13px">${esc(su.model_mode ? 'Path: ' + su.model_mode + '. ' : '')}${esc(su.model_note)} Captured outbound request content (credentials excluded). No invoice fields, account or contact values, or row outcomes are sent.</p>` +
+    (reqs.length ? reqs.map((r, i) => `<p class="src">#${i + 1} ${esc(r.label)}</p><pre>${esc(typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 2))}</pre>`).join('') : '<p><b>No model call was made in this run.</b></p>');
+  $('trace').innerHTML = S.trace.map((x) => `<li><span class="st">${esc(x.stage)}</span> ${esc(x.text)}</li>`).join('');
+}
+
+function bind() {
+  document.querySelectorAll('.thumb').forEach((b) => (b.onclick = () => go(+b.dataset.step)));
+  const on = (id, fn) => { if ($(id)) $(id).onclick = fn; };
+  on('next', () => go(step + 1));
+  on('back', () => go(step - 1));
+  on('reveal', () => go(3));
+  on('restart', () => go(1));
+  on('replay', replay);
+  on('openEv', () => { $('evidence').open = true; $('modelInputs').open = true; $('evidence').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+  on('retrySetup', async () => { S = (await api('/api/setup/retry', {})).data; revealed = false; step = maxStep = 1; render(); poll(); });
+}
+
+async function replay() {
+  if (busy) return;
+  busy = true; render();
+  const runId = S.run_id;
+  const fail = failArmed; failArmed = false;
+  const { status, data } = await api('/api/replay', { run_id: runId, fail });
+  busy = false;
+  if (status === 409 || data.stale || runId !== S.run_id) return; // reset during replay: discard late result
+  S = data.state; render();
+}
+
+async function refresh() { S = (await api('/api/state')).data; render(); }
+let pollTimer = null;
+function poll() { clearInterval(pollTimer); pollTimer = setInterval(async () => { await refresh(); if (S.setup.status !== 'pending') clearInterval(pollTimer); }, 800); }
+
+$('reset').onclick = async () => {
+  S = (await api('/api/reset', {})).data;
+  step = maxStep = 1; revealed = false; busy = false; prevP3 = null; failArmed = failOnce;
+  $('evidence').open = false; $('modelInputs').open = false; render();
+};
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest('input,textarea,summary,pre')) return;
+  if (e.key === 'ArrowRight' && step < maxStep) go(step + 1);
+  if (e.key === 'ArrowLeft' && step > 1) go(step - 1);
+});
+
+(async () => {
+  await api('/api/reset', {}); await refresh(); poll();
+  const jump = +new URLSearchParams(location.search).get('frame'); // rehearsal/screenshot helper
+  if (jump >= 2 && jump <= 5) {
+    if (jump === 5 && S.setup.status === 'ready') { revealed = true; await replay(); }
+    go(jump);
+  }
+})();
+</script>
+</body>
+</html>

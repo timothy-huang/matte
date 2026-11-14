@@ -1,0 +1,5 @@
+[
+  { "id": "P1", "vendor_id": "V-KUMO", "amount_jpy": 62000, "proposed_destination": "JP-MUFG-001-A-1001", "thread_reply": false, "invoice_no": "KS-2611-014" },
+  { "id": "P2", "vendor_id": "V-AOBA", "amount_jpy": 195000, "proposed_destination": "JP-RKTN-711-A-8088", "thread_reply": true, "invoice_no": "AW-2611-031" },
+  { "id": "P3", "vendor_id": "V-AOBA", "amount_jpy": 480000, "proposed_destination": "JP-RKTN-711-A-9099", "thread_reply": true, "invoice_no": "AW-2611-032" }
+]
