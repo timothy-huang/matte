@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>Matte</title>
 <style>
 :root{
@@ -11,9 +12,6 @@
   --hold:#c2410c;--hold-soft:#fff1e8;--ok:#1a7f37;--ok-soft:#e9f6ec;--hl:#fff3b0;
   --win:#e4e7eb;--phone:#111;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1115;--surface:#171a1f;--sub:#1d2127;--ink:#e6e8eb;--muted:#9aa3ad;--line:#2d333b;--line2:#252a31;
-  --brand:#4c9be8;--brand-ink:#0b1220;--brand-soft:#16273b;--hold:#ff9b6b;--hold-soft:#3a2216;--ok:#5fcf7f;--ok-soft:#14301c;--hl:#5a4a0f;--win:#22262d;--phone:#050505}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif}
 main{max-width:1200px;margin:0 auto;padding:14px 16px 56px}
@@ -244,6 +242,33 @@ pre.req{white-space:pre-wrap;word-break:break-word;font-size:11.5px;background:v
 .trace .st{color:var(--brand);display:inline-block;min-width:68px}
 .banner{background:var(--hold-soft);color:var(--hold);border:1px solid var(--hold);padding:8px 12px;border-radius:6px;margin:0 0 10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .banner.wait{background:var(--surface);color:var(--muted);border-color:var(--line)}
+
+/* money forward integrations store */
+.body{position:relative}
+.storehd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.search{border:1px solid var(--line);border-radius:4px;padding:5px 12px;color:var(--muted);font-size:13px;min-width:220px;background:var(--surface)}
+.cats{display:flex;gap:6px;margin:10px 0 12px;flex-wrap:wrap;font-size:12.5px}
+.cats span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted);background:var(--surface)}
+.cats .cur{background:var(--ink);color:#fff;border-color:var(--ink)}
+.feat{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid var(--brand);background:var(--brand-soft);border-radius:8px;padding:14px 16px}
+.appic{width:36px;height:36px;border-radius:8px;background:#e7ebf0;color:#3d4752;display:grid;place-items:center;font-weight:700;flex:none}
+.appic.big,.mh .appic{background:var(--brand);color:#fff}
+.appic.big{width:56px;height:56px;font-size:24px;border-radius:12px}
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media (max-width:760px){.apps{grid-template-columns:1fr}}
+.app{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--surface)}
+.app .nm{font-weight:600;font-size:13px}.app .ds{font-size:11.5px;color:var(--muted)}
+.modalwrap{position:absolute;inset:0;background:rgba(20,24,30,.38);display:grid;place-items:start center;padding-top:40px;z-index:5}
+.modal{background:#fff;border-radius:8px;width:min(500px,92%);box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden}
+.mh{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.scopes{list-style:none;margin:0;padding:8px 16px}
+.scopes li{padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px;display:grid;gap:2px}
+.scopes li:last-child{border-bottom:0}
+.scopes span{color:var(--muted);font-size:12px}
+.scopes input{accent-color:var(--brand)}
+.mf{display:flex;justify-content:flex-end;gap:8px;padding:10px 16px;background:var(--sub);border-top:1px solid var(--line)}
+.crumb{display:flex;align-items:center}
+.policy label b{font-weight:600}
 </style>
 </head>
 <body>
@@ -297,10 +322,10 @@ const last4 = (m) => String(m).slice(-4);
 
 let S = null, step = 1, maxStep = 1, revealed = false, activated = false, booting = false, bootShown = 0;
 let busy = false, failArmed = failOnce, prevP3 = null, flipNow = false, runToken = 0;
-let call = { phase: 'idle', shown: 0, secs: 0 }, audio = false;
+let call = { phase: 'idle', shown: 0, secs: 0 }, audio = false, install = 'store';
 
 const STEPS = [
-  { n: 1, t: 'Turn on Matte', tool: 'Money Forward + Gmail', who: 'Bookkeeper', mt: true, when: 'Mon 10 Nov · 09:30', addr: 'app.matte.example/setup' },
+  { n: 1, t: 'Add Matte', tool: 'Money Forward 連携サービス', who: 'Bookkeeper', mt: true, when: 'Mon 10 Nov · 09:30', addr: 'Money Forward クラウド債務支払 · 連携サービス' },
   { n: 2, t: 'Supplier emails', tool: 'Gmail', who: 'Supplier', when: 'Thu 13 Nov · 17:12', addr: 'Gmail · 受信トレイ' },
   { n: 3, t: 'Friday payment run', tool: 'Money Forward クラウド', who: 'Bookkeeper', when: 'Fri 14 Nov · 15:40', addr: 'Money Forward クラウド債務支払 · 支払予定' },
   { n: 4, t: 'Matte holds it', tool: 'Matte', who: 'Matte', mt: true, when: 'Fri 14 Nov · 15:41', addr: 'app.matte.example/runs/2026-11-14' },
@@ -361,24 +386,63 @@ function sActivate() {
     { t: 'Test the rule before it can clear anything', d: su.tests ? `${su.tests.cases.filter((c) => c.pass).length}/${su.tests.cases.length} passed · email reply alone stays held` : 'Not tested', ok: !!su.tests?.passed },
     { t: 'Check records in an isolated sandbox', d: `Runs on ${esc(su.partners.runner)} · results stay inside Matte`, ok: !String(su.partners.runner).includes('failed') },
   ];
-  const ints = (title, rows) => `<div class="col"><h4>${title}</h4>${rows.map(([n, d, on]) => `<div class="int"><div><div class="nm">${n}</div><div class="ds">${d}</div></div><span class="pill ${on ? 'on' : 'off'}">${on ? 'Connected' : 'Connect'}</span></div>`).join('')}</div>`;
-  return `${say('Minato Foods\' bookkeeper adds <b>Matte</b> between the accounting system and the bank file. One click turns it on.')}
-  <div class="cols">
-    ${ints('Mail: watches for bank-change emails', [['Gmail', 'keiri@minato-foods.example', true], ['Yahoo!メール', 'ビジネス', false], ['Outlook', 'Microsoft 365', false]])}
-    ${ints('Accounting: reads bills & vendor master', [['Money Forward クラウド', '債務支払 · 取引先マスタ', true], ['freee会計', '', false], ['QuickBooks Online', '', false]])}
-    ${ints('Bank: gates the payment file', [['全銀フォーマット (FB data)', 'Upload via bank portal', true], ['Approver', '田中 (CFO)', true]])}
-  </div>
-  <div class="act">
-    <div class="policy"><h4>Payment policy</h4>
-      <label><input type="checkbox" checked disabled> Hold any payment whose payee account differs from the vendor master</label>
-      <label><input type="checkbox" checked disabled> Clear only by callback to the phone number already on the vendor master</label>
-      <label><input type="checkbox" checked disabled> Never use phone numbers or links from the email asking for the change</label>
-      <label><input type="checkbox" checked disabled> Cleared payments still go to a human approver</label></div>
+  if (install === 'store' || install === 'consent') {
+    const others = [
+      ['銀行口座連携', 'Money Forward', '入出金明細を自動で取得', true],
+      ['承認ワークフロー', 'Money Forward', '支払の多段階承認', true],
+      ['請求書OCR', 'パートナー', 'PDF請求書を自動で読み取り', false],
+      ['チャット通知', 'パートナー', '支払予定をチャットに通知', false],
+      ['電子帳簿保存', 'パートナー', '電子帳簿保存法に対応した保存', false],
+      ['経費精算', 'Money Forward', '立替経費の申請と精算', false],
+    ];
+    return `${say('Monday morning. In Money Forward, the bookkeeper opens <b>連携サービス (integrations)</b> and finds Matte, a plugin that guards the payment run.')}
+    <div class="store">
+      <div class="storehd"><div><b style="font-size:16px">連携サービス</b> <span class="muted small">Integrations</span></div><div class="search">アプリを検索</div></div>
+      <div class="cats"><span class="cur">すべて</span><span>不正対策</span><span>銀行</span><span>ワークフロー</span><span>請求書</span><span>通知</span></div>
+      <div class="feat">
+        <div class="appic big">待</div>
+        <div style="flex:1;min-width:220px">
+          <div class="small muted">おすすめ · 不正対策 (Fraud prevention)</div>
+          <div style="font-size:18px;font-weight:700">Matte <span class="muted" style="font-size:13px;font-weight:400">振込先変更チェック</span></div>
+          <p style="margin:4px 0 2px">振込先口座の変更を検知して支払を自動で保留。取引先マスタの電話番号への折り返し確認でのみ解除します。</p>
+          <p class="muted small" style="margin:0">Holds any payment whose bank details changed. Clears only after a callback to the number already on the vendor master.</p>
+          <div class="small muted" style="margin-top:6px">対応: 支払予定 · 取引先マスタ · 振込データ (全銀) · Gmail / Yahoo!メール / Outlook</div>
+        </div>
+        <button class="primary big" id="addAppCard">追加する</button>
+      </div>
+      <div class="apps">${others.map(([n, by, d, inst]) => `<div class="app"><div class="appic">${n[0]}</div><div style="flex:1"><div class="nm">${n}</div><div class="ds">${by} · ${d}</div></div><span class="pill ${inst ? 'on' : 'off'}">${inst ? 'インストール済み' : '詳細'}</span></div>`).join('')}</div>
+    </div>
+    ${install === 'consent' ? `<div class="modalwrap" role="dialog" aria-modal="true" aria-labelledby="consentT"><div class="modal">
+      <div class="mh"><div class="appic">待</div><div><b id="consentT">Matte が次のアクセスを求めています</b><div class="small muted">Matte is requesting access to Money Forward クラウド債務支払 · ミナト食品株式会社</div></div></div>
+      <ul class="scopes">
+        <li><b>請求書・支払予定の読み取り</b><span>Read bills and scheduled payments</span></li>
+        <li><b>取引先マスタの読み取り (変更不可)</b><span>Read the vendor master. Matte can't edit it.</span></li>
+        <li><b>振込データ作成前のチェックと保留</b><span>Check and hold payments before the bank file is created</span></li>
+        <li><label><input type="checkbox" checked> <b>Gmail「請求書」ラベルのメールを読み取る</b></label><span>Read Gmail messages labelled 請求書 to spot bank-change requests</span></li>
+      </ul>
+      <div class="small muted" style="padding:0 16px 10px">Matte never sends money and can't approve payments. The approver stays in control.</div>
+      <div class="mf"><button id="cancelApp">キャンセル</button><button class="primary" id="allowApp">許可して追加 · Allow</button></div>
+    </div></div>` : ''}`;
+  }
+  return `${say('Matte is added. The bookkeeper reviews its settings inside Money Forward and turns it on for the payment run.')}
+  <div class="crumb small muted">連携サービス › <b style="color:var(--ink)">Matte</b> <span class="pill on" style="margin-left:6px">追加済み</span></div>
+  <div class="act" style="margin-top:8px">
     <div>
-      ${activated || booting ? `<ul class="boot">${steps.map((s, i) => `<li class="${i < bootShown ? (!s.ok ? 'fail' : s.warn ? 'warn' : 'done') : i === bootShown && booting ? 'run' : ''}"><span class="ic">${i < bootShown ? (!s.ok ? '!' : s.warn ? '↺' : '✓') : ''}</span><span><b>${s.t}</b><br><span class="muted small">${i < bootShown ? s.d : '&nbsp;'}</span></span></li>`).join('')}</ul>
+      <div class="policy"><h4>支払ルール · Payment policy</h4>
+        <label><input type="checkbox" checked disabled> Hold any payment whose payee account differs from the vendor master</label>
+        <label><input type="checkbox" checked disabled> Clear only by callback to the phone number already on the vendor master</label>
+        <label><input type="checkbox" checked disabled> Never use phone numbers or links from the email asking for the change</label>
+        <label><input type="checkbox" checked disabled> Cleared payments still go to a human approver</label></div>
+      <div class="policy" style="margin-top:10px"><h4>接続 · Connections</h4>
+        <label><span style="flex:1">承認者 (Approver)</span><b>田中 (CFO)</b></label>
+        <label><span style="flex:1">メール (Mail)</span><b>Gmail · keiri@minato-foods.example</b></label>
+        <label><span style="flex:1">振込データ (Bank file)</span><b>全銀フォーマット · checked before export</b></label></div>
+    </div>
+    <div>
+      ${activated || booting ? `<ul class="boot">${steps.map((st, i) => `<li class="${i < bootShown ? (!st.ok ? 'fail' : st.warn ? 'warn' : 'done') : i === bootShown && booting ? 'run' : ''}"><span class="ic">${i < bootShown ? (!st.ok ? '!' : st.warn ? '↺' : '✓') : ''}</span><span><b>${st.t}</b><br><span class="muted small">${i < bootShown ? st.d : '&nbsp;'}</span></span></li>`).join('')}</ul>
         ${activated && su.model_status ? `<div class="retryrow">${esc(su.model_status.host)} node still starting?<button id="retryModel" style="font-size:12px;padding:3px 10px">Retry ${esc(su.model_status.host)}</button></div>` : ''}
         ${activated ? (su.rule ? `<div class="onbanner">Matte is on for Friday's payment run <span class="mono small">${esc(su.rule.id)}</span></div>` : `<div class="banner" style="margin-top:10px">Rule unavailable, so changed payments stay held.</div>`) : ''}`
-      : `<div class="box" style="height:100%;display:grid;align-content:center;gap:8px;text-align:center;padding:24px"><b style="font-size:16px">Protect the next payment run</b><span class="muted small">Matte checks every payee against the vendor master before the bank file is created.</span></div>`}
+      : `<div class="box" style="height:100%;display:grid;align-content:center;gap:8px;text-align:center;padding:24px"><b style="font-size:16px">有効にすると次の支払予定から適用</b><span class="muted small">Once active, Matte checks every payee against the vendor master before the bank file is created.</span></div>`}
     </div>
   </div>`;
 }
@@ -497,7 +561,7 @@ function sApprove() {
 const SCENES = { 1: sActivate, 2: sMail, 3: sRun, 4: sHold, 5: sCall, 6: sApprove };
 const MT = ['Setup', 'Runs', 'Vendors', 'Audit log'];
 const APPBARS = {
-  1: () => appbar('Matte', MT, 'Setup'),
+  1: () => appbar('Money Forward クラウド債務支払', ['請求書', '支払予定', '取引先マスタ', '振込データ', '連携サービス'], '連携サービス'),
   2: () => appbar('Gmail', ['受信トレイ', 'ラベル: 請求書'], '受信トレイ'),
   3: () => appbar('Money Forward クラウド債務支払', ['請求書', '支払予定', '取引先マスタ', '振込データ'], '支払予定'),
   4: () => appbar('Matte', MT, 'Runs'), 5: () => appbar('Matte', MT, 'Runs'), 6: () => appbar('Matte', MT, 'Runs'),
@@ -508,7 +572,9 @@ function bar() {
   const back = step > 1 ? '<button id="back">← Back</button>' : '';
   let main = '', status = '', extra = '';
   if (step === 1) {
-    main = activated ? '<button class="primary" id="next">Thursday\'s email →</button>' : `<button class="primary big" id="activate" ${booting || su.status === 'pending' ? 'disabled' : ''}>Activate Matte</button>`;
+    if (install === 'store') { main = '<button class="primary" id="addApp">Add Matte</button>'; status = 'Find Matte in 連携サービス'; }
+    else if (install === 'consent') status = 'Review the permissions';
+    else main = activated ? '<button class="primary" id="next">Thursday\'s email →</button>' : `<button class="primary big" id="activate" ${booting || su.status === 'pending' ? 'disabled' : ''}>Activate Matte</button>`;
     if (su.status === 'pending') status = 'Preparing the check…';
   }
   if (step === 2) main = '<button class="primary" id="next">Friday\'s payment run →</button>';
@@ -584,7 +650,11 @@ function bind() {
   on('reveal', () => go(4));
   on('restart', () => go(1));
   on('activate', activate);
-  on('retryModel', async () => { S = (await api('/api/setup/retry', {})).data; hardReset(); activated = false; render(); poll(); pollThenActivate(); });
+  on('addApp', () => { install = 'consent'; render(); $('allowApp')?.focus(); });
+  on('addAppCard', () => { install = 'consent'; render(); $('allowApp')?.focus(); });
+  on('cancelApp', () => { install = 'store'; render(); });
+  on('allowApp', () => { install = 'config'; render(); });
+  on('retryModel', async () => { S = (await api('/api/setup/retry', {})).data; hardReset(); install = 'config'; render(); poll(); pollThenActivate(); });
   on('replay', replay);
   if ($('audio')) $('audio').onchange = (e) => { audio = e.target.checked; };
   on('openEv', () => { $('evidence').open = true; $('modelInputs').open = true; $('evidence').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); });
@@ -635,7 +705,7 @@ async function replay() {
 
 function hardReset() {
   runToken++; step = maxStep = 1; revealed = activated = booting = busy = false; bootShown = 0; prevP3 = null; failArmed = failOnce;
-  call = { phase: 'idle', shown: 0, secs: 0 };
+  call = { phase: 'idle', shown: 0, secs: 0 }; install = 'store';
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   $('evidence').open = false; $('modelInputs').open = false;
 }
@@ -650,6 +720,7 @@ function poll() { clearInterval(pollTimer); pollTimer = setInterval(async () => 
 
 $('reset').onclick = async () => { S = (await api('/api/reset', {})).data; hardReset(); render(); };
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && install === 'consent') { install = 'store'; render(); return; }
   if (e.target.closest('input,textarea,summary,pre')) return;
   if (e.key === 'ArrowRight' && step < maxStep) go(step + 1);
   if (e.key === 'ArrowLeft' && step > 1) go(step - 1);
@@ -657,9 +728,10 @@ document.addEventListener('keydown', (e) => {
 
 (async () => {
   await api('/api/reset', {}); await refresh(); poll();
+  if (['consent', 'config'].includes(params.get('install'))) { install = params.get('install'); render(); }
   const jump = +params.get('frame'); // rehearsal / screenshot helper
   if (jump >= 2 && jump <= 6) {
-    activated = true; bootShown = 4;
+    activated = true; bootShown = 4; install = 'config';
     if (jump >= 5) { revealed = true; maxStep = 5; step = 5; }
     if ((jump === 6 || params.has('call')) && S.setup.status === 'ready') await replay();
     go(jump);
