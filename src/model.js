@@ -69,7 +69,7 @@ function firstJson(text) {
 
 async function chat(body, captured) {
   const base = process.env.MODEL_BASE_URL.replace(/\/$/, '');
-  captured.push({ label: `POST ${base}/chat/completions`, body }); // exact outbound body; headers (credentials) excluded
+  captured.push({ label: `POST ${maskHost(base)}/chat/completions`, body }); // exact outbound body; headers (credentials) excluded
   const res = await fetch(base + '/chat/completions', {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${process.env.MODEL_API_KEY || 'ollama'}` },
@@ -157,6 +157,7 @@ async function proposeCodeAF(guidance, log) {
   if (r.code !== 0 && !rule) throw new Error(`codeaf exit ${r.code}: ${(r.err || r.out).slice(0, 300)}`);
   return { rule, rationale: '', mode: 'CodeAF harness', requests };
 }
+const maskHost = (u) => { try { const x = new URL(u); return `${x.protocol}//${x.hostname.split('.')[0].slice(0, 4)}…${x.hostname.includes('nos.ci') ? '.nos.ci' : ''}${x.pathname.replace(/\/$/, '')}`; } catch { return '<model endpoint>'; } };
 
 export function modelPath() {
   const p = process.env.MODEL_PATH || 'direct';

@@ -6,12 +6,15 @@ import { fetchGuidance, readCache, writeCache } from './guidance.js';
 import { proposeRule, modelPath } from './model.js';
 import { core, runAbstractTests, FALLBACK_RULE } from './core.js';
 import { evaluate, warmRunner, runnerName } from './runner.js';
+import { buildSignals, investigateWithModel, validateFindings, ruleBasedFindings } from './investigate.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const load = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, 'fixtures', f), 'utf8'));
 const VENDORS = load('vendors.json');
 const PAYMENTS = load('payments.json');
 const CONTACTS = load('contacts.json');
+const EMAILS = load('emails.json');
+const publicContact = (c) => c && { label: c.label, person: c.person, phone_masked: c.phone_masked }; // full number stays server-side
 const VENDORS_SNAPSHOT = JSON.stringify(VENDORS);
 
 const now = () => new Date().toISOString();
@@ -31,6 +34,7 @@ const setup = {
   model_requests: [],
   model_note: '',
   model_status: null,
+  investigation: null,
   trace: [],
   baseline: null, // initial results for all payments (no callbacks)
   error: null,
@@ -38,7 +42,7 @@ const setup = {
 const strace = (stage, text) => { setup.trace.push({ t: now(), stage, text }); console.log(`[setup:${stage}] ${text}`); };
 
 async function runSetup() {
-  Object.assign(setup, { status: 'pending', trace: [], error: null, rule: null, tests: null, model_requests: [], model_note: '', model_status: null, baseline: null });
+  Object.assign(setup, { status: 'pending', trace: [], error: null, rule: null, tests: null, model_requests: [], model_note: '', model_status: null, investigation: null, baseline: null });
   // 1. Guidance via Tavily
   let guidance = null;
   let cachedRule = null;
@@ -124,6 +128,36 @@ async function runSetup() {
     strace('runner', `evaluation failed: ${e.message} — all payments held`);
     setup.baseline = PAYMENTS.map((p) => ({ payment_id: p.id, status: 'Needs verification', reason: 'Check unavailable' }));
   }
+  // 4. Investigation: explain held payments. Can only ADD flags; never feeds decide().
+  try {
+    const cases = buildSignals(PAYMENTS, VENDORS, CONTACTS, EMAILS);
+    const base = ruleBasedFindings(cases);
+    let items = base, source = 'rule-based notes';
+    try {
+      const raw = await investigateWithModel(cases, setup.model_requests);
+      const fromModel = validateFindings(raw, cases);
+      // Union: model findings are added on top of rule-based ones; nothing is removed or downgraded.
+      const rank = { info: 0, warn: 1, high: 2 };
+      items = {};
+      for (const id of Object.keys(base)) {
+        const byCode = new Map(base[id].flags.map((f) => [f.code, { ...f, by: 'rule' }]));
+        for (const f of fromModel[id]?.flags || []) {
+          const cur = byCode.get(f.code);
+          if (!cur) byCode.set(f.code, { ...f, by: 'model' });
+          else if (rank[f.severity] > rank[cur.severity]) byCode.set(f.code, { ...cur, severity: f.severity, ja: f.ja || cur.ja, en: f.en || cur.en, by: 'model' });
+        }
+        items[id] = { flags: [...byCode.values()], summary_ja: fromModel[id]?.summary_ja || base[id].summary_ja, summary_en: fromModel[id]?.summary_en || base[id].summary_en };
+      }
+      source = `${MODEL_LABEL}`;
+      strace('investigate', `${MODEL_LABEL} reviewed ${cases.length} held payments from redacted signals · findings added, none removed`);
+    } catch (e) {
+      source = `rule-based notes (${MODEL_HOST} ${/503|not ready/.test(e.message) ? 'not up yet' : 'unavailable'})`;
+      strace('investigate', `model unavailable (${e.message}) · rule-based notes from the same signals`);
+    }
+    setup.investigation = { source, items, signals_sent: cases.map((c) => c.signals) };
+  } catch (e) {
+    strace('investigate', `investigation skipped: ${e.message}`);
+  }
   if (setup.status !== 'failed') setup.status = setup.rule ? 'ready' : 'failed';
 }
 
@@ -188,7 +222,7 @@ function view() {
   return {
     run_id: run.id,
     replay: run.replay,
-    event: run.event && { event_id: run.event.event_id, method: run.event.method, outcome: run.event.outcome, contact: CONTACTS[run.event.contact_ref], confirmed_ending: run.event.confirmed_destination.slice(-4) },
+    event: run.event && { event_id: run.event.event_id, method: run.event.method, outcome: run.event.outcome, contact: publicContact(CONTACTS[run.event.contact_ref]), confirmed_ending: run.event.confirmed_destination.slice(-4) },
     payments: PAYMENTS.map((p) => {
       const v = VENDORS.find((x) => x.id === p.vendor_id);
       return {
@@ -196,14 +230,14 @@ function view() {
         on_file: { bank: bank(v.verified_destination), ending: mask(v.verified_destination) },
         invoice: { bank: bank(p.proposed_destination), ending: mask(p.proposed_destination) },
         changed: p.proposed_destination !== v.verified_destination,
-        trusted_contact: v.trusted_contact_ref ? CONTACTS[v.trusted_contact_ref] : null,
+        trusted_contact: v.trusted_contact_ref ? publicContact(CONTACTS[v.trusted_contact_ref]) : null,
         result: results[p.id] || { status: 'Needs verification', reason: 'Checking…' },
       };
     }),
     setup: {
       status: setup.status, error: setup.error, guidance: setup.guidance && { title: setup.guidance.title, url: setup.guidance.url, excerpt: setup.guidance.excerpt, retrieved_via: setup.guidance.retrieved_via, retrieved_at: setup.guidance.retrieved_at },
       rule: setup.rule, tests: setup.tests, rationale: setup.rationale, partners: setup.partners,
-      model_mode: setup.model_mode, model_note: setup.model_note, model_status: setup.model_status, model_requests: setup.model_requests,
+      model_mode: setup.model_mode, model_note: setup.model_note, model_status: setup.model_status, model_requests: setup.model_requests, investigation: setup.investigation,
     },
     trace: [...setup.trace, ...run.trace],
   };

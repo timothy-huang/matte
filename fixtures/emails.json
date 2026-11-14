@@ -1,0 +1,8 @@
+{
+  "P2": { "channel": "reply_in_thread", "from": "billing@aoba-works.example", "reply_to": "billing@aoba-works.example", "received": "2026-11-13T17:12:00+09:00",
+          "body": "追伸: 今月より振込先口座を変更いたしました。AW-2611-032 および AW-2611-031 は、添付の新しい請求書記載の口座へお振込みをお願いいたします。ご不明点は 050-1234-7731 までお電話ください。本日中のご対応をお願いできますと幸いです。",
+          "phones": ["050-1234-7731"] },
+  "P3": { "channel": "reply_in_thread", "from": "billing@aoba-works.example", "reply_to": "billing@aoba-works.example", "received": "2026-11-13T17:12:00+09:00",
+          "body": "追伸: 今月より振込先口座を変更いたしました。AW-2611-032 および AW-2611-031 は、添付の新しい請求書記載の口座へお振込みをお願いいたします。ご不明点は 050-1234-7731 までお電話ください。本日中のご対応をお願いできますと幸いです。",
+          "phones": ["050-1234-7731"] }
+}

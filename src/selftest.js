@@ -33,5 +33,18 @@ const ok = (await evaluate({ payments: P, vendors: V, rule, callbacks: { P3: [ex
 check('P3 exact callback', label(ok), 'Ready for approval · Trusted callback confirmed');
 check('same rule id', ok.rule_id, 'rule-test');
 check('vendor record untouched', JSON.stringify(V), before);
+// Investigation boundary: signals carry no account numbers, phone numbers, amounts or vendor names.
+const { buildSignals, validateFindings, ruleBasedFindings } = await import('./investigate.js');
+const C = JSON.parse(fs.readFileSync(new URL('../fixtures/contacts.json', import.meta.url)));
+const E = JSON.parse(fs.readFileSync(new URL('../fixtures/emails.json', import.meta.url)));
+const cases = buildSignals(P, V, C, E);
+const sent = JSON.stringify(cases.map((c) => c.signals));
+const secrets = [...V.flatMap((v) => [v.verified_destination, v.name, v.name_ja]), ...P.flatMap((p) => [p.proposed_destination, String(p.amount_jpy), p.invoice_no]), ...Object.values(C).map((c) => c.phone), '7731', '9099', '2002'];
+check('investigation signals leak no record values', secrets.filter((x) => x && sent.includes(x)).join(','), '');
+check('investigation covers only changed payments', cases.map((c) => c.payment_id).join(','), 'P2,P3');
+const v2 = validateFindings({ cases: [{ case: cases[1].signals.case, clear: true, status: 'Ready for approval', flags: [{ code: 'LOOKS_SAFE', severity: 'info' }, { code: 'URGENCY', severity: 'warn', ja: 'x', en: 'y' }] }] }, cases);
+check('validator keeps only allowlisted flags', JSON.stringify(v2.P3.flags.map((f) => f.code)), '["URGENCY"]');
+check('validator drops clear/status fields', 'clear' in v2.P3 || 'status' in v2.P3, false);
+check('rule-based notes flag phone not on file', ruleBasedFindings(cases).P3.flags.some((f) => f.code === 'PHONE_NOT_ON_FILE'), true);
 console.log(fail ? `\n${fail} FAILED` : '\nall passed');
 process.exit(fail ? 1 : 0);
