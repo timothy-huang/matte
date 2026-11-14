@@ -19,6 +19,7 @@ button{font:inherit;border-radius:4px;border:1px solid var(--line);background:va
 button.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
 button.ok{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:600}
 button.big{padding:10px 20px;font-size:15px}
+button{white-space:nowrap}
 button:disabled{opacity:.45;cursor:not-allowed}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
@@ -258,7 +259,7 @@ pre.req{white-space:pre-wrap;word-break:break-word;font-size:11.5px;background:v
 @media (max-width:760px){.apps{grid-template-columns:1fr}}
 .app{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--surface)}
 .app .nm{font-weight:600;font-size:13px}.app .ds{font-size:11.5px;color:var(--muted)}
-.modalwrap{position:absolute;inset:0;background:rgba(20,24,30,.38);display:grid;place-items:start center;padding-top:40px;z-index:5}
+.modalwrap{position:fixed;inset:0;background:rgba(20,24,30,.38);display:grid;place-items:start center;padding-top:40px;z-index:5}
 .modal{background:#fff;border-radius:8px;width:min(500px,92%);box-shadow:0 12px 40px rgba(0,0,0,.25);overflow:hidden}
 .mh{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
 .scopes{list-style:none;margin:0;padding:8px 16px}
@@ -269,17 +270,118 @@ pre.req{white-space:pre-wrap;word-break:break-word;font-size:11.5px;background:v
 .mf{display:flex;justify-content:flex-end;gap:8px;padding:10px 16px;background:var(--sub);border-top:1px solid var(--line)}
 .crumb{display:flex;align-items:center}
 .policy label b{font-weight:600}
+
+.onb{max-width:980px}
+.stepper{display:flex;gap:0;list-style:none;padding:0;margin:0 0 6px;font-size:12px;border:1px solid var(--line);border-radius:4px;overflow:hidden;width:fit-content;max-width:100%;flex-wrap:wrap}
+.stepper li{padding:4px 12px;color:var(--muted);background:var(--surface)}
+.stepper li+li{border-left:1px solid var(--line)}
+.stepper li.cur{background:var(--brand);color:#fff;font-weight:600}
+.stepper li.done{background:var(--ok-soft);color:var(--ok)}
+.oauth{max-width:520px;margin:4px auto 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.oauth .oh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--sub)}
+.oauth .ob{padding:14px 16px}
+.disc{font-size:11.5px;color:var(--muted);margin:12px 2px 0}
+
+.rail.r5{grid-template-columns:repeat(5,1fr)}
+@media (max-width:860px){.rail.r5{grid-template-columns:repeat(5,minmax(118px,1fr))}}
+.mfuser{margin-left:auto;font-size:12px;color:var(--muted)}
+.mtag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid #b9d3ef;border-radius:3px;padding:0 6px 0 2px;margin-right:6px;vertical-align:1px}
+.mtag i{font-style:normal;background:var(--brand);color:#fff;border-radius:2px;width:15px;height:15px;display:inline-grid;place-items:center;font-size:10px}
+.mftool{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.mftool .sp{flex:1}
+.mattebtn{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--brand);color:var(--brand);background:#fff;font-weight:700}
+.mattebtn i{font-style:normal;background:var(--brand);color:#fff;border-radius:3px;width:18px;height:18px;display:inline-grid;place-items:center;font-size:11px}
+.mattebtn:not(:disabled){box-shadow:0 0 0 3px var(--brand-soft)}
+.mpanel,.drawer{border:1px solid #b9d3ef;background:#f6faff;border-radius:6px;padding:10px 12px;margin-bottom:12px}
+.mph{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.mpanel .boot{display:grid;grid-template-columns:repeat(4,1fr);border:0;gap:6px}
+@media (max-width:860px){.mpanel .boot{grid-template-columns:1fr 1fr}}
+.mpanel .boot li{border:1px solid var(--line);border-radius:5px;background:#fff}
+.flagsum{margin-top:8px;background:var(--hold-soft);border:1px solid var(--hold);color:var(--hold);border-radius:5px;padding:8px 10px;font-size:13px}
+.chgtxt{background:var(--hl);padding:0 3px;color:var(--ink)}
+.app.hl{border-color:var(--brand);background:#f6faff}
+.appic.m{background:var(--brand);color:#fff}
+.toast{margin-top:12px;background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);border-radius:6px;padding:9px 12px;font-size:13px}
+.heldrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:7px 10px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:13px;margin-top:6px}
+.heldrow .sp{flex:1}.heldrow.cur{border-color:var(--brand)}
+.msggrid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-bottom:14px}
+@media (max-width:760px){.msggrid{grid-template-columns:1fr}}
+.msgcard,.reply{border:1px solid var(--line);border-radius:6px;background:#fff;overflow:hidden}
+.mh2{padding:7px 12px;border-bottom:1px solid var(--line2);font-size:13px}
+.mbody{padding:10px 12px;font-size:13px;line-height:1.7}
+.sentline{padding:7px 12px;background:var(--ok-soft);color:var(--ok);font-size:12px;font-weight:600}
+.reply{border-color:#c9a227}
+.verdict{margin-top:10px;border:1px solid var(--hold);background:var(--hold-soft);color:var(--hold);border-radius:6px;padding:10px 12px;font-size:13px}
+.verdict b{color:var(--hold)}
+.waiting{display:grid;place-items:center;min-height:120px;text-align:center;color:var(--muted)}
+.sched{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid #b9d3ef;background:#f6faff;border-radius:6px;padding:9px 12px;margin-bottom:14px;font-size:13px}
+.sched .sp{flex:1}
+
+.mfprod{font-weight:700;font-size:13px;border-left:3px solid #2f6fdf;padding-left:7px}
+.mfcrumb{font-size:12.5px;color:var(--muted)}
+.mfpage{font-size:15px;font-weight:600;margin:0 0 4px}
+.mftabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:10px;font-size:13px}
+.mftabs span{padding:6px 14px;color:var(--muted)}
+.mftabs .cur{color:#2f6fdf;border-bottom:2px solid #2f6fdf;font-weight:600}
+.mffilter{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;font-size:12px;margin-bottom:10px}
+@media (max-width:760px){.mffilter{grid-template-columns:1fr 1fr}}
+.mffilter label{display:grid;gap:3px;color:var(--ink)}
+.fi{border:1px solid var(--line);border-radius:3px;padding:4px 8px;color:var(--muted);background:#fff;font-size:12px}
+.mfbtns{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mfbtns .sp{flex:1}
+.mfsearch{border-color:#2f6fdf!important;color:#2f6fdf!important}
+.mfband{height:14px;background:#eef0f2;margin:0 -16px 10px}
+table.mfgrid{width:100%;border-collapse:collapse;font-size:12.5px;border:1px solid var(--line)}
+table.mfgrid th{text-align:left;font-weight:600;color:#555;font-size:11.5px;background:#f7f8f9;border:1px solid var(--line);padding:7px 8px;white-space:nowrap}
+table.mfgrid td{border:1px solid var(--line2);padding:8px;vertical-align:top}
+table.mfgrid .n{text-align:right;font-variant-numeric:tabular-nums}
+table.mfgrid tr.sel td{background:#f3f7fe}
+table.mfgrid tr.flip td{animation:flash 1.8s}
+.stp{display:inline-block;margin-top:3px;font-size:11px;background:#eef6ef;color:#2e7d32;border-radius:3px;padding:0 6px}
+.mflink{color:#2f6fdf}
+
+/* full-screen layout */
+main{max-width:none!important;padding:8px 14px 24px!important}
+.top{margin-bottom:6px}.rail{margin-bottom:8px}
+.window{min-height:calc(100vh - 150px);display:flex;flex-direction:column}
+.window .body{flex:1}
+table.mfgrid .n,table.mfgrid td:nth-child(8){white-space:nowrap}
+.paper{max-width:620px}
+.invs{justify-content:center}
+
+.mfhome{display:grid;grid-template-columns:180px 1fr;gap:16px;min-height:380px}
+@media (max-width:760px){.mfhome{grid-template-columns:1fr}.mfside{display:none}}
+.mfside{border-right:1px solid var(--line);font-size:13px;padding-right:8px}
+.mfside div{padding:6px 10px;border-radius:4px;color:#333}
+.mfside .grp{font-size:11px;color:var(--muted);padding-top:12px}
+.mfside .cur{background:#eaf1fd;color:#2f6fdf;font-weight:600}
+.mfside .go,.quick .go{cursor:pointer;color:#2f6fdf;font-weight:600;outline:2px dashed #9dbcf0;outline-offset:1px}
+.hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:1000px){.hgrid{grid-template-columns:1fr}}
+.hcard{border:1px solid var(--line);border-radius:6px;padding:12px 14px;background:#fff}
+.hcard h4{margin:0 0 8px;font-size:13px}
+.task{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.task b{color:#2f6fdf}
+.news{padding:6px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quick span{border:1px solid var(--line);border-radius:4px;padding:10px;text-align:center;font-size:13px}
+
+.rail.r4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:860px){.rail.r4{grid-template-columns:repeat(4,minmax(130px,1fr))}}
+.flagsig{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;color:var(--ink)}
+.passmini{color:var(--ok);font-weight:700}
+.evbtn{font-size:12px;padding:3px 10px}
 </style>
 </head>
 <body>
 <main>
   <div class="top">
-    <div class="logo"><div class="mark" aria-hidden="true">待</div><div><b>Matte</b> <span>待って · No callback, no transfer. · synthetic demo data</span></div></div>
+    <div class="logo"><div class="mark" aria-hidden="true">待</div><div><b>Matte</b> <span>待って · No callback, no transfer. · demo with synthetic data</span></div></div>
     <div class="chips" id="chips" aria-label="What actually ran"></div>
     <button id="reset">Reset demo</button>
   </div>
   <div id="setupBanner"></div>
-  <nav aria-label="Workflow steps"><ol class="rail" id="rail"></ol></nav>
+  <nav aria-label="Workflow steps"><ol class="rail r4" id="rail"></ol></nav>
 
   <section class="window" aria-live="polite">
     <div class="chrome"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="addr" id="addr"></span><span class="when" id="when"></span></div>
@@ -301,6 +403,7 @@ pre.req{white-space:pre-wrap;word-break:break-word;font-size:11.5px;background:v
     <details id="modelInputs"><summary>Model inputs</summary><div id="modelBody"></div></details>
     <details><summary>Trace</summary><ul class="trace" id="trace"></ul></details>
   </details>
+  <p class="disc">Illustrative mock-ups. Matte is not affiliated with or endorsed by Money Forward, Google, Yahoo Japan, Microsoft, freee or Intuit. All companies, people, accounts and phone numbers shown are fictional.</p>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -312,28 +415,25 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
 const params = new URLSearchParams(location.search);
 const failOnce = params.has('fail');
 
-const BANKS = {
-  SMBC: { ja: '三井住友銀行', br: '渋谷支店' },
-  RKTN: { ja: '楽天銀行', br: '第一営業支店' },
-  MUFG: { ja: '三菱UFJ銀行', br: '新宿支店' },
-};
+const BANKS = { SMBC: { ja: '三井住友銀行', br: '渋谷支店' }, RKTN: { ja: '楽天銀行', br: '第一営業支店' }, MUFG: { ja: '三菱UFJ銀行', br: '新宿支店' } };
 const bank = (code) => BANKS[code] || { ja: code, br: '' };
 const last4 = (m) => String(m).slice(-4);
 
-let S = null, step = 1, maxStep = 1, revealed = false, activated = false, booting = false, bootShown = 0;
-let busy = false, failArmed = failOnce, prevP3 = null, flipNow = false, runToken = 0;
-let call = { phase: 'idle', shown: 0, secs: 0 }, audio = false, install = 'store';
+let S = null, step = 1, maxStep = 1, revealed = false, busy = false, failArmed = failOnce, prevP3 = null, flipNow = false, runToken = 0;
+let install = 'home';             // home | list | consent | added
+let scan = 'idle', bootShown = 0, rowsChecked = 0; // scan: idle | running | done
+let msg = 'draft';                // draft | sent | replied
+let call = { phase: 'idle', shown: 0, secs: 0 }, audio = false;
 
+const MF = 'Money Forward クラウド債務支払';
+const MFNAV = ['請求書', '支払予定', '取引先マスタ', '振込データ', '連携サービス'];
 const STEPS = [
-  { n: 1, t: 'Add Matte', tool: 'Money Forward 連携サービス', who: 'Bookkeeper', mt: true, when: 'Mon 10 Nov · 09:30', addr: 'Money Forward クラウド債務支払 · 連携サービス' },
-  { n: 2, t: 'Supplier emails', tool: 'Gmail', who: 'Supplier', when: 'Thu 13 Nov · 17:12', addr: 'Gmail · 受信トレイ' },
-  { n: 3, t: 'Friday payment run', tool: 'Money Forward クラウド', who: 'Bookkeeper', when: 'Fri 14 Nov · 15:40', addr: 'Money Forward クラウド債務支払 · 支払予定' },
-  { n: 4, t: 'Matte holds it', tool: 'Matte', who: 'Matte', mt: true, when: 'Fri 14 Nov · 15:41', addr: 'app.matte.example/runs/2026-11-14' },
-  { n: 5, t: 'Callback', tool: 'Phone · number on file', who: 'Bookkeeper ↔ Supplier', when: 'Fri 14 Nov · 15:44', addr: 'app.matte.example/runs/2026-11-14/callback' },
-  { n: 6, t: 'Approve & bank file', tool: 'Approver → 全銀 file', who: 'Approver', when: 'Fri 14 Nov · 15:47', addr: 'app.matte.example/runs/2026-11-14/approve' },
+  { n: 1, t: 'Home → add Matte', tool: 'ホーム › 連携サービス', who: 'Bookkeeper', when: 'Mon 10 Nov · 09:30', nav: '設定 › 連携サービス' },
+  { n: 2, t: 'Scan payment requests', tool: '支払依頼 · Matte', who: 'Bookkeeper', mt: true, when: 'Fri 14 Nov · 15:40', nav: '経理業務 › 支払依頼 › 申請一覧' },
+  { n: 3, t: 'Callback', tool: 'Matte · phone on file', who: 'Bookkeeper ↔ Supplier', mt: true, when: 'Fri 14 Nov · 15:44', nav: '経理業務 › 支払依頼 › 申請一覧' },
+  { n: 4, t: 'Approve & bank file', tool: '集計(支払処理)', who: 'Approver', when: 'Fri 14 Nov · 15:47', nav: '経理業務 › 支払依頼 › 集計(支払処理)' },
 ];
 
-// Simulated callback voice log (ja + English subtitles). key = the line that states the account.
 const VOICE = (inv, end, phone) => [
   { ts: '00:00', sp: 'sys', ja: `発信: 取引先マスタ登録の番号 ${phone}`, en: 'Dialing the number on the vendor master' },
   { ts: '00:06', sp: 'them', who: '山田', ja: 'はい、アオバワークス経理の山田です。', en: 'Aoba Works accounts, Yamada speaking.' },
@@ -351,13 +451,17 @@ async function api(path, body) {
 }
 const P = (id) => S.payments.find((p) => p.id === id);
 const isReady = (p) => p.result.status === 'Ready for approval';
-function go(n) { step = n; maxStep = Math.max(maxStep, n); if (n >= 4) revealed = true; render(); }
+function go(n) { step = n; maxStep = Math.max(maxStep, n); render(); }
+const appbar = (cur) => `<span class="mfprod">クラウド債務支払</span><span class="mfcrumb">${cur}</span><span class="mfuser">ミナト食品株式会社 · 佐藤</span>`;
+const APNO = { P1: 'AP4512', P2: 'AP4513', P3: 'AP4514' };
+const en = (n) => num(n) + '円';
+const mfTabs = (cur) => `<div class="mfpage">支払依頼</div><div class="mftabs">${['申請一覧', '明細一覧', '集計(支払処理)', '分析'].map((t) => `<span class="${t === cur ? 'cur' : ''}">${t}</span>`).join('')}</div>`;
+const say = (text) => `<div class="say"><span class="who">Story</span><span>${text}</span></div>`;
+const mtag = '<span class="mtag"><i>待</i>Matte</span>';
 
-// ---------- pieces ----------
+// ---------- invoice paper ----------
 function invoice(p, side, cap, stamp) {
-  const old = side === 'old';
-  const acct = old ? p.on_file : p.invoice;
-  const b = bank(acct.bank);
+  const old = side === 'old', acct = old ? p.on_file : p.invoice, b = bank(acct.bank);
   const no = old ? p.invoice_no.replace(/(\d+)$/, (m) => String(+m - 5).padStart(m.length, '0')) : p.invoice_no;
   const sub = Math.round(p.amount_jpy / 1.1), tax = p.amount_jpy - sub, l1 = 300000, l2 = sub - l1;
   return `<div class="paper"><span class="cap">${cap}</span>${stamp || ''}
@@ -374,220 +478,198 @@ function invoice(p, side, cap, stamp) {
   </div>`;
 }
 
-const appbar = (name, items, cur) => `<span class="name">${name}</span><nav>${items.map((x) => `<span class="${x === cur ? 'cur' : ''}">${x}</span>`).join('')}</nav>`;
-const say = (text) => `<div class="say"><span class="who">Story</span><span>${text}</span></div>`;
-
-// ---------- scenes ----------
-function sActivate() {
-  const su = S.setup;
-  const steps = [
-    { t: 'Read official guidance', d: su.guidance ? `${esc(su.guidance.title)} · Tavily ${esc(su.partners.tavily)}` : 'Guidance unavailable', ok: !!su.guidance },
-    { t: 'Build the verification rule', d: su.model_status ? `${esc(su.model_status.host)} model (${esc(su.model_status.model)}) is ${esc(su.model_status.why)}. Using the prewritten rule from the same guidance; it passes the same tests.` : esc(su.partners.model), ok: !!su.rule, warn: !!su.model_status },
-    { t: 'Test the rule before it can clear anything', d: su.tests ? `${su.tests.cases.filter((c) => c.pass).length}/${su.tests.cases.length} passed · email reply alone stays held` : 'Not tested', ok: !!su.tests?.passed },
-    { t: 'Check records in an isolated sandbox', d: `Runs on ${esc(su.partners.runner)} · results stay inside Matte`, ok: !String(su.partners.runner).includes('failed') },
-  ];
-  if (install === 'store' || install === 'consent') {
-    const others = [
-      ['銀行口座連携', 'Money Forward', '入出金明細を自動で取得', true],
-      ['承認ワークフロー', 'Money Forward', '支払の多段階承認', true],
-      ['請求書OCR', 'パートナー', 'PDF請求書を自動で読み取り', false],
-      ['チャット通知', 'パートナー', '支払予定をチャットに通知', false],
-      ['電子帳簿保存', 'パートナー', '電子帳簿保存法に対応した保存', false],
-      ['経費精算', 'Money Forward', '立替経費の申請と精算', false],
-    ];
-    return `${say('Monday morning. In Money Forward, the bookkeeper opens <b>連携サービス (integrations)</b> and finds Matte, a plugin that guards the payment run.')}
-    <div class="store">
-      <div class="storehd"><div><b style="font-size:16px">連携サービス</b> <span class="muted small">Integrations</span></div><div class="search">アプリを検索</div></div>
-      <div class="cats"><span class="cur">すべて</span><span>不正対策</span><span>銀行</span><span>ワークフロー</span><span>請求書</span><span>通知</span></div>
-      <div class="feat">
-        <div class="appic big">待</div>
-        <div style="flex:1;min-width:220px">
-          <div class="small muted">おすすめ · 不正対策 (Fraud prevention)</div>
-          <div style="font-size:18px;font-weight:700">Matte <span class="muted" style="font-size:13px;font-weight:400">振込先変更チェック</span></div>
-          <p style="margin:4px 0 2px">振込先口座の変更を検知して支払を自動で保留。取引先マスタの電話番号への折り返し確認でのみ解除します。</p>
-          <p class="muted small" style="margin:0">Holds any payment whose bank details changed. Clears only after a callback to the number already on the vendor master.</p>
-          <div class="small muted" style="margin-top:6px">対応: 支払予定 · 取引先マスタ · 振込データ (全銀) · Gmail / Yahoo!メール / Outlook</div>
-        </div>
-        <button class="primary big" id="addAppCard">追加する</button>
+function sHome() {
+  const total = S.payments.reduce((a, p) => a + p.amount_jpy, 0);
+  return `${say('Monday morning. The bookkeeper logs in to Money Forward and lands on the home screen, as on any other day.')}
+  <div class="mfhome">
+    <aside class="mfside"><div class="cur">ホーム</div><div class="grp">経理業務</div><div>支払依頼</div><div>支払処理</div><div>取引先</div><div class="grp">設定</div><div class="go" id="sideInt">連携サービス</div><div>事業者設定</div></aside>
+    <div class="mfmain">
+      <div class="mfpage">ホーム</div>
+      <div class="hgrid">
+        <div class="hcard"><h4>未処理のタスク</h4><div class="task"><span>承認待ちの申請</span><b>0件</b></div><div class="task"><span>今週の支払予定</span><b>${S.payments.length}件 · ${en(total)}</b></div><div class="task"><span>支払期日 11/14 (金)</span><b>${S.payments.length}件</b></div></div>
+        <div class="hcard"><h4>お知らせ</h4><div class="news"><span class="muted small">11/10</span> 支払依頼の申請一覧に表示項目を追加しました</div><div class="news"><span class="muted small">11/04</span> 年末年始の振込スケジュールについて</div><div class="news"><span class="muted small">10/28</span> メンテナンスのお知らせ</div></div>
+        <div class="hcard"><h4>よく使う機能</h4><div class="quick"><span>支払依頼を作成</span><span>申請一覧</span><span>集計(支払処理)</span><span class="go" id="quickInt">連携サービス</span></div></div>
       </div>
-      <div class="apps">${others.map(([n, by, d, inst]) => `<div class="app"><div class="appic">${n[0]}</div><div style="flex:1"><div class="nm">${n}</div><div class="ds">${by} · ${d}</div></div><span class="pill ${inst ? 'on' : 'off'}">${inst ? 'インストール済み' : '詳細'}</span></div>`).join('')}</div>
-    </div>
-    ${install === 'consent' ? `<div class="modalwrap" role="dialog" aria-modal="true" aria-labelledby="consentT"><div class="modal">
-      <div class="mh"><div class="appic">待</div><div><b id="consentT">Matte が次のアクセスを求めています</b><div class="small muted">Matte is requesting access to Money Forward クラウド債務支払 · ミナト食品株式会社</div></div></div>
-      <ul class="scopes">
-        <li><b>請求書・支払予定の読み取り</b><span>Read bills and scheduled payments</span></li>
-        <li><b>取引先マスタの読み取り (変更不可)</b><span>Read the vendor master. Matte can't edit it.</span></li>
-        <li><b>振込データ作成前のチェックと保留</b><span>Check and hold payments before the bank file is created</span></li>
-        <li><label><input type="checkbox" checked> <b>Gmail「請求書」ラベルのメールを読み取る</b></label><span>Read Gmail messages labelled 請求書 to spot bank-change requests</span></li>
-      </ul>
-      <div class="small muted" style="padding:0 16px 10px">Matte never sends money and can't approve payments. The approver stays in control.</div>
-      <div class="mf"><button id="cancelApp">キャンセル</button><button class="primary" id="allowApp">許可して追加 · Allow</button></div>
-    </div></div>` : ''}`;
-  }
-  return `${say('Matte is added. The bookkeeper reviews its settings inside Money Forward and turns it on for the payment run.')}
-  <div class="crumb small muted">連携サービス › <b style="color:var(--ink)">Matte</b> <span class="pill on" style="margin-left:6px">追加済み</span></div>
-  <div class="act" style="margin-top:8px">
-    <div>
-      <div class="policy"><h4>支払ルール · Payment policy</h4>
-        <label><input type="checkbox" checked disabled> Hold any payment whose payee account differs from the vendor master</label>
-        <label><input type="checkbox" checked disabled> Clear only by callback to the phone number already on the vendor master</label>
-        <label><input type="checkbox" checked disabled> Never use phone numbers or links from the email asking for the change</label>
-        <label><input type="checkbox" checked disabled> Cleared payments still go to a human approver</label></div>
-      <div class="policy" style="margin-top:10px"><h4>接続 · Connections</h4>
-        <label><span style="flex:1">承認者 (Approver)</span><b>田中 (CFO)</b></label>
-        <label><span style="flex:1">メール (Mail)</span><b>Gmail · keiri@minato-foods.example</b></label>
-        <label><span style="flex:1">振込データ (Bank file)</span><b>全銀フォーマット · checked before export</b></label></div>
-    </div>
-    <div>
-      ${activated || booting ? `<ul class="boot">${steps.map((st, i) => `<li class="${i < bootShown ? (!st.ok ? 'fail' : st.warn ? 'warn' : 'done') : i === bootShown && booting ? 'run' : ''}"><span class="ic">${i < bootShown ? (!st.ok ? '!' : st.warn ? '↺' : '✓') : ''}</span><span><b>${st.t}</b><br><span class="muted small">${i < bootShown ? st.d : '&nbsp;'}</span></span></li>`).join('')}</ul>
-        ${activated && su.model_status ? `<div class="retryrow">${esc(su.model_status.host)} node still starting?<button id="retryModel" style="font-size:12px;padding:3px 10px">Retry ${esc(su.model_status.host)}</button></div>` : ''}
-        ${activated ? (su.rule ? `<div class="onbanner">Matte is on for Friday's payment run <span class="mono small">${esc(su.rule.id)}</span></div>` : `<div class="banner" style="margin-top:10px">Rule unavailable, so changed payments stay held.</div>`) : ''}`
-      : `<div class="box" style="height:100%;display:grid;align-content:center;gap:8px;text-align:center;padding:24px"><b style="font-size:16px">有効にすると次の支払予定から適用</b><span class="muted small">Once active, Matte checks every payee against the vendor master before the bank file is created.</span></div>`}
     </div>
   </div>`;
 }
 
-function sMail() {
-  const p3 = P('P3');
-  return `${say('Aoba Works bills every month. Thursday evening, a reply lands <b>in the same thread, from their usual address</b>.')}
-  <div class="mail">
-    <div class="folders"><div class="cur">受信トレイ (12)</div><div>スター付き</div><div>送信済み</div><div>請求書</div><div>経理</div></div>
-    <div class="thread"><h3>【請求書送付】11月分 ウェブ制作・保守業務<span class="lbl">請求書</span></h3>
-      <div class="em"><div class="av">山</div><div><div class="hd"><span><b>山田 (アオバワークス)</b> <span class="muted">&lt;billing@aoba-works.example&gt;</span></span><span class="muted">11月10日 10:03</span></div>
-        <p>ミナト食品 経理ご担当者様<br>いつもお世話になっております。11月分の請求書をお送りします。ご確認のほどよろしくお願いいたします。</p>
-        <p class="muted small">(“Please find November's invoice attached.”)</p>
-        <span class="att"><i></i>${esc(p3.invoice_no)}.pdf · 182 KB</span></div></div>
-      <div class="em" style="background:var(--hold-soft)"><div class="av">山</div><div><div class="hd"><span><b>山田 (アオバワークス)</b> <span class="muted">&lt;billing@aoba-works.example&gt;</span></span><span class="muted">11月13日 17:12</span></div>
-        <p>追伸: 今月より振込先口座を変更いたしました。${esc(p3.invoice_no)} および AW-2611-031 は、添付の新しい請求書記載の口座へお振込みをお願いいたします。ご不明点は 050-••••-7731 までお電話ください。</p>
-        <p class="muted small">(“We changed our bank account this month. Please pay both invoices to the account on the attached revised invoice. Questions: call 050-••••-7731.”)</p>
-        <span class="att"><i></i>${esc(p3.invoice_no)}_rev.pdf · 184 KB</span></div></div>
-    </div>
-  </div>
-  <p class="muted small" style="margin-top:10px">This pattern is real: Japan's IPA documented a payment sent to fraudsters after a change request from a supplier's <i>genuine, compromised</i> inbox.</p>`;
+// ---------- step 1: integrations ----------
+function sIntegrations() {
+  if (install === 'home') return sHome();
+  const apps = [
+    ['Matte', '振込先変更チェック · 振込先口座の変更を検知し、取引先マスタの電話番号への折り返し確認まで支払を保留', 'matte'],
+    ['請求書OCR', 'パートナー · PDF請求書を自動で読み取り', ''],
+    ['チャット通知', 'パートナー · 支払予定をチャットに通知', ''],
+    ['承認ワークフロー拡張', 'パートナー · 金額に応じた多段階承認', ''],
+    ['電子帳簿保存', 'パートナー · 電子帳簿保存法に対応した保存', ''],
+    ['経費精算', 'パートナー · 立替経費の申請と精算', ''],
+  ];
+  const added = install === 'added';
+  return `${say(added ? 'Matte is added. A <b>Matteでチェック</b> button now appears on the invoices list.' : 'Monday morning, in Money Forward. The bookkeeper opens <b>連携サービス (integrations)</b> and adds Matte.')}
+  <div class="storehd"><div><b style="font-size:16px">連携サービス</b> <span class="muted small">Integrations</span></div><div class="search">${added ? 'アプリを検索' : 'Matte'}</div></div>
+  <div class="cats"><span class="cur">すべて</span><span>不正対策</span><span>請求書</span><span>ワークフロー</span><span>通知</span></div>
+  <div class="apps">${apps.map(([n, d, k]) => `<div class="app ${k === 'matte' ? 'hl' : ''}"><div class="appic ${k === 'matte' ? 'm' : ''}">${k === 'matte' ? '待' : n[0]}</div><div style="flex:1"><div class="nm">${n}</div><div class="ds">${d}</div></div>
+    ${k === 'matte' ? (added ? '<span class="pill on">追加済み</span>' : '<button class="primary" id="addAppCard">追加</button>') : '<span class="pill off">詳細</span>'}</div>`).join('')}</div>
+  ${added ? `<div class="toast">✓ Matteを追加しました · Matte was added. Open <b>請求書</b> to scan invoices before the bank file is created.</div>` : ''}
+  ${install === 'consent' ? `<div class="modalwrap" role="dialog" aria-modal="true" aria-labelledby="consentT"><div class="modal">
+    <div class="mh"><div class="appic m">待</div><div><b id="consentT">Matte が次のアクセスを求めています</b><div class="small muted">Matte is requesting access to ミナト食品株式会社</div></div></div>
+    <ul class="scopes">
+      <li><b>請求書・支払予定の読み取り</b><span>Read bills and scheduled payments</span></li>
+      <li><b>取引先マスタの読み取り (変更不可)</b><span>Read the vendor master, including the phone number on file. Matte can't edit it.</span></li>
+      <li><b>振込データ作成前のチェックと保留</b><span>Check, and hold, payments before the bank file is created</span></li>
+      <li><b>取引先への確認メッセージ送信</b><span>Send confirmation messages to the contact on the vendor master</span></li>
+    </ul>
+    <div class="small muted" style="padding:0 16px 10px">Matte never sends money and can't approve payments. You can revoke access at any time.</div>
+    <div class="mf"><button id="cancelApp">キャンセル</button><button class="primary" id="allowApp">許可して追加 · Allow</button></div>
+  </div></div>` : ''}`;
 }
 
-function payables(mode) {
-  return `<div class="tw"><table class="grid"><thead><tr><th>ID</th><th>取引先</th><th>請求書番号</th><th class="n">金額</th><th>振込先 (請求書)</th><th>${mode === 'run' ? '状態' : 'Matte'}</th></tr></thead><tbody>
-  ${S.payments.map((p) => {
-    const b = bank(p.invoice.bank), ok = isReady(p);
-    const st = mode === 'run' ? '<span class="badge idle">支払予定</span>'
-      : `<span class="badge ${ok ? 'ok' : 'hold'}">${ok ? 'Ready for approval' : 'Needs verification'}</span><div class="src">${esc(p.result.reason)}</div>`;
-    return `<tr class="${p.id === 'P3' ? 'sel' : ''} ${p.id === 'P3' && flipNow ? 'flip' : ''}"><td>${p.id}</td><td>${esc(p.supplier_ja)}</td><td class="mono small">${esc(p.invoice_no)}</td><td class="n">${yen(p.amount_jpy)}</td>
-      <td>${esc(b.ja)} ••••${revealed && p.changed ? `<b>${esc(last4(p.invoice.ending))}</b>` : esc(last4(p.invoice.ending))}</td><td>${st}</td></tr>`;
+// ---------- step 2: invoices list + scan ----------
+function scanSteps() {
+  const su = S.setup;
+  return [
+    { t: 'Read official guidance', d: su.guidance ? `${esc(su.guidance.title)} · Tavily ${esc(su.partners.tavily)}` : 'Guidance unavailable', ok: !!su.guidance },
+    { t: 'Build the verification rule', d: su.model_status ? `${esc(su.model_status.host)} model (${esc(su.model_status.model)}) is ${esc(su.model_status.why)}; using the prewritten rule from the same guidance.` : esc(su.partners.model), ok: !!su.rule, warn: !!su.model_status },
+    { t: 'Test the rule', d: su.tests ? `${su.tests.cases.filter((c) => c.pass).length}/${su.tests.cases.length} passed · email reply alone stays held` : 'Not tested', ok: !!su.tests?.passed },
+    { t: 'Compare each payee with the vendor master', d: `${S.payments.length} invoices checked on ${esc(su.partners.runner)}`, ok: !String(su.partners.runner).includes('failed') },
+  ];
+}
+
+function invoiceTable() {
+  return `<div class="mfband"></div><div class="tw"><table class="mfgrid"><thead><tr><th><input type="checkbox" disabled></th><th>申請番号 ⇅</th><th>作成日 ⇅</th><th>申請者</th><th>タイトル</th><th>支払先</th><th>振込先</th><th>支払期日 ⇅</th><th class="n">合計金額</th>${scan !== 'idle' ? `<th>${mtag}</th>` : ''}<th></th></tr></thead><tbody>
+  ${S.payments.map((p, i) => {
+    const b = bank(p.invoice.bank), ok = isReady(p), checked = scan === 'done' || i < rowsChecked;
+    const mcell = scan === 'idle' ? '' : `<td>${!checked ? '<span class="muted small">checking…</span>' : `<span class="badge ${ok ? 'ok' : 'hold'}">${ok ? 'OK' : '保留 · Held'}</span><div class="src">${esc(p.result.reason)}</div>`}</td>`;
+    return `<tr class="${p.id === 'P3' ? 'sel' : ''} ${p.id === 'P3' && flipNow ? 'flip' : ''}"><td><input type="checkbox" disabled></td>
+      <td><div>${APNO[p.id]} <span class="muted small">(${p.id})</span></div><span class="stp">✓ 承認済み</span></td><td>2026/11/${p.id === 'P1' ? '07' : '10'}</td><td>佐藤</td>
+      <td>2026年11月 ${esc(p.supplier_ja.replace('株式会社', ''))} 請求書<div class="src mono">${esc(p.invoice_no)}</div></td><td>${esc(p.supplier_ja)}</td>
+      <td>${esc(b.ja)} ••••${revealed && p.changed ? `<b class="chgtxt">${esc(last4(p.invoice.ending))}</b>` : esc(last4(p.invoice.ending))}</td><td>2026/11/14</td><td class="n">${en(p.amount_jpy)}</td>${mcell}<td><span class="mflink">詳細</span> ⋮</td></tr>`;
   }).join('')}</tbody></table></div>`;
 }
 
-function sRun() {
-  const p3 = P('P3');
-  return `${say('Friday, 15:40. Three bills are queued for today\'s bank file. Last month\'s Aoba invoice and this one look the same.')}
-  ${payables('run')}
-  <div class="invs" style="margin-top:20px">${invoice(p3, 'old', '先月 · Last month', '<span class="stamp paid">支払済</span>')}${invoice(p3, 'new', '今週 · This week (P3)')}</div>
-  <p class="q">Would you pay it?</p>`;
+function sInvoices() {
+  const p3 = P('P3'), su = S.setup, steps = scanSteps();
+  const flagged = S.payments.filter((p) => p.changed).length;
+  const panel = scan === 'idle' ? '' : `<div class="mpanel"><div class="mph">${mtag}<b>振込先チェック</b><span class="muted small">Payee check before the bank file</span></div>
+    <ul class="boot">${steps.map((st, i) => `<li class="${i < bootShown ? (!st.ok ? 'fail' : st.warn ? 'warn' : 'done') : i === bootShown && scan === 'running' ? 'run' : ''}"><span class="ic">${i < bootShown ? (!st.ok ? '!' : st.warn ? '↺' : '✓') : ''}</span><span><b>${st.t}</b><br><span class="muted small">${i < bootShown ? st.d : '&nbsp;'}</span></span></li>`).join('')}</ul>
+    ${scan === 'done' ? `<div class="flagsum"><b>${S.payments.length}件をチェック · ${flagged}件を保留</b> · ${flagged} invoices pay a different account than the vendor master. Nothing is paid until a callback confirms the exact account.<div class="flagsig"><span>✉ Supplier replied in the same thread: <b>not counted as verification</b></span><span class="passmini">✓ Test passed · email reply alone stays held</span><button id="openEv" class="evbtn">Evidence & model inputs</button></div></div>` : ''}
+    ${scan === 'done' && su.model_status ? `<div class="retryrow">${esc(su.model_status.host)} node still starting?<button id="retryModel" style="font-size:12px;padding:3px 10px">Retry ${esc(su.model_status.host)}</button></div>` : ''}</div>`;
+  return `${say(scan === 'done' ? 'Matte flagged <b>P2 and P3</b>: both Aoba invoices pay a new account. Nothing is paid until the change is confirmed.' : 'Friday, 15:40. Today\'s invoices are ready to pay. Last month\'s Aoba invoice and this one look the same. <b>Would you pay it?</b>')}
+  ${mfTabs('申請一覧')}
+  <div class="mffilter">
+    <label>キーワード<span class="fi">🔍</span></label><label>申請ステータス<span class="fi">承認済み ▾</span></label><label>支払先<span class="fi">▾</span></label><label>支払期日<span class="fi">2026/11/14 〜 2026/11/14</span></label>
+    <div class="mfbtns"><span class="muted small">${S.payments.length}件 · ${en(S.payments.reduce((a, p) => a + p.amount_jpy, 0))}</span><span class="sp"></span><button disabled>クリア</button><button class="mfsearch" disabled>検索</button>
+      <button class="mattebtn" id="scanBtn" ${scan !== 'idle' || su.status === 'pending' ? 'disabled' : ''}><i>待</i>Matteでチェック</button></div>
+  </div>
+  ${panel}
+  ${invoiceTable()}
+  <div class="invs ${revealed ? 'revealed' : ''}" style="margin-top:20px">${invoice(p3, 'old', '先月 · Last month (paid)', '<span class="stamp paid">支払済</span>')}${invoice(p3, 'new', '今週 · This week · P3', revealed ? '<span class="stamp held">保留</span>' : '')}</div>`;
 }
 
+// ---------- step 3: confirmation message ----------
 function evidenceMini() {
   const su = S.setup, g = su.guidance, t = su.tests;
   const q = g ? (esc(g.excerpt).match(/[^.]*hacked the sender[^.]*\.|[^.]*known contact[^.]*\./gi) || []).join(' ').replace(/(known contact in the company directly, using contact details held on record)/i, '<mark>$1</mark>') : '';
-  const lab = { 'callback.payment_id': 'Same payment', 'callback.vendor_id': 'Same vendor', 'callback.confirmed_destination': 'Exact new account confirmed', 'callback.contact_ref': 'Called the number on the vendor master', 'callback.method': 'By phone callback', 'callback.outcome': 'Supplier confirmed' };
   return `<div class="why">
-    <div class="box"><h4>Why the email reply isn't enough</h4>${g ? `<blockquote>“${q}”</blockquote><div class="src" style="margin-top:6px"><a href="${esc(g.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(g.title)}</a> · ${esc(g.retrieved_via)}</div>` : '<span class="muted">Guidance unavailable.</span>'}</div>
-    <div class="box"><h4>What clears it</h4>${su.rule ? `<ul class="rulelist">${su.rule.all.map((p) => `<li>${lab[p.left] || esc(p.left)}</li>`).join('')}</ul><div class="src mono">${esc(su.rule.id)}</div>` : '<span class="muted">Verification rule unavailable.</span>'}
+    <div class="box"><h4>Why the reply isn't enough</h4>${g ? `<blockquote>“${q}”</blockquote><div class="src" style="margin-top:6px"><a href="${esc(g.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(g.title)}</a> · ${esc(g.retrieved_via)}</div>` : '<span class="muted">Guidance unavailable.</span>'}</div>
+    <div class="box"><h4>What clears it</h4><ul class="rulelist"><li>Callback to the number on the vendor master</li><li>Supplier states the exact new account</li><li>Same payment, same vendor</li></ul>${su.rule ? `<div class="src mono">${esc(su.rule.id)}</div>` : ''}
       ${t ? `<div class="${t.passed ? 'pass' : 'fail'}">${t.passed ? '✓ Test passed · email reply alone stays held' : 'Tests failed'}</div>` : ''}
-      <button id="openEv" style="margin-top:8px;font-size:12px;padding:4px 10px">Evidence & model inputs</button></div>
-  </div>`;
+      <button id="openEv" style="margin-top:8px;font-size:12px;padding:4px 10px">Evidence & model inputs</button></div></div>`;
 }
 
-function sHold() {
-  const p3 = P('P3'), a = bank(p3.on_file.bank), b = bank(p3.invoice.bank);
-  return `${say('Before the bank file is built, Matte compares every payee with the <b>vendor master</b>. P3 doesn\'t match, so it\'s held.')}
-  <div class="alert"><span class="ic">!</span><div><b>支払保留 · Payment held</b> · ${esc(p3.supplier_ja)} · ${esc(p3.invoice_no)} · ${yen(p3.amount_jpy)}<br><span class="small">The payee account on the invoice differs from the verified account on the vendor master.</span></div></div>
-  <div class="invs revealed">${invoice(p3, 'old', 'Last month · matches vendor master')}${invoice(p3, 'new', 'Invoice P3', '<span class="stamp held">保留</span>')}</div>
-  <table class="diff"><tr><th></th><th>Vendor master (verified)</th><th>Invoice P3</th></tr>
-    <tr><th>Bank</th><td>${esc(a.ja)} ${esc(a.br)}</td><td class="x">${esc(b.ja)} ${esc(b.br)}</td></tr>
-    <tr><th>Account</th><td>普通 ••••${esc(last4(p3.on_file.ending))}</td><td class="x">普通 ••••${esc(last4(p3.invoice.ending))}</td></tr></table>
-  <div class="signals"><span class="sig">Account changed ${esc(last4(p3.on_file.ending))} → ${esc(last4(p3.invoice.ending))}</span><span class="sig">Supplier replied in the same thread</span><span class="sig">${isReady(p3) ? 'Trusted callback confirmed' : 'Trusted callback pending'}</span></div>
-  ${evidenceMini()}`;
+function sMessage() {
+  const p3 = P('P3'), p2 = P('P2'), a = bank(p3.on_file.bank), b = bank(p3.invoice.bank);
+  return `${say(msg === 'replied' ? 'The supplier replied <b>"yes, we changed banks"</b>, from their real address. Matte still holds it: a compromised inbox can send that reply too.' : 'Matte drafts a confirmation to the contact on the <b>vendor master</b>, not to whoever sent the change.')}
+  <div class="drawer"><div class="mph">${mtag}<b>保留中の請求書 · Held invoices</b></div>
+    <div class="heldrow cur"><b>P3</b> ${esc(p3.supplier_ja)} · ${yen(p3.amount_jpy)} · ${esc(a.ja)} ••••${esc(last4(p3.on_file.ending))} → <b class="chgtxt">${esc(b.ja)} ••••${esc(last4(p3.invoice.ending))}</b><span class="sp"></span><span class="badge hold">${msg === 'replied' ? '返信あり · still held' : msg === 'sent' ? '送信済み' : '要確認'}</span></div>
+    <div class="heldrow"><b>P2</b> ${esc(p2.supplier_ja)} · ${yen(p2.amount_jpy)} · ••••${esc(last4(p2.on_file.ending))} → <b class="chgtxt">••••${esc(last4(p2.invoice.ending))}</b><span class="sp"></span><span class="badge hold">${msg === 'draft' ? '要確認' : '送信済み · no reply'}</span></div>
+  </div>
+  <div class="msggrid">
+    <div class="msgcard"><div class="mh2"><span class="muted small">宛先 To</span> <b>山田 様 (アオバワークス)</b> <span class="muted small">billing@aoba-works.example · from the vendor master, not the reply-to address</span></div>
+      <div class="mh2"><span class="muted small">件名</span> 【確認】請求書 ${esc(p3.invoice_no)} 振込先口座について</div>
+      <div class="mbody">アオバワークス株式会社 山田様<br><br>いつもお世話になっております。ミナト食品の佐藤です。<br>請求書 ${esc(p3.invoice_no)} 記載の振込先が、弊社に登録の口座と異なっております。変更の有無をご確認ください。<br>なお、確認のため取引先マスタ登録のお電話番号へ折り返しご連絡いたします。
+        <div class="muted small" style="margin-top:6px">(“The bank account on invoice ${esc(p3.invoice_no)} differs from the one we have on file. Please confirm. We'll also call you back on the number we have on file.”)</div></div>
+      ${msg === 'draft' ? '' : '<div class="sentline">✓ 送信済み 15:41 · Sent (simulated) · also sent for P2</div>'}</div>
+    <div>
+      ${msg === 'replied' ? `<div class="reply"><div class="mh2"><b>Re: 【確認】請求書 ${esc(p3.invoice_no)}</b> <span class="muted small">billing@aoba-works.example · 15:42</span></div>
+        <div class="mbody">はい、銀行を変更いたしました。新しい口座へのお振込みをお願いいたします。<div class="muted small">(“Yes, we changed banks. Please pay the new account.”)</div></div></div>
+        <div class="verdict"><b>まだ保留 · Still held</b><br>An email reply can't clear a bank change, even from the supplier's real address. P3: <b>${esc(p3.result.status)} · ${esc(p3.result.reason)}</b></div>`
+      : msg === 'sent' ? '<div class="box waiting">返信待ち… Waiting for a reply</div>'
+      : '<div class="box waiting">Send the confirmation to start. Whatever comes back, the payment stays held until a callback.</div>'}
+    </div>
+  </div>
+  ${msg === 'replied' ? evidenceMini() : ''}`;
 }
 
+// ---------- step 4: callback ----------
 function sCall() {
   const p3 = P('P3'), c = p3.trusted_contact;
   const lines = VOICE(p3.invoice_no, last4(p3.invoice.ending), c?.phone_masked || '');
-  const ready = isReady(p3);
-  const logged = !!S.event && call.phase === 'idle';
-  const done = call.phase === 'ended' || logged;
-  const shown = done ? lines.length : call.shown;
-  const live = call.phase === 'talking';
-  const dialing = call.phase === 'dialing' || call.phase === 'ringing';
-  const st = done ? '通話終了 · Call ended' : { idle: '発信前 · Ready to call', dialing: '発信中… · Dialing', ringing: '呼び出し中… · Ringing', talking: '通話中 · Connected' }[call.phase];
-  const secs = done ? 36 : call.secs;
-  const failed = S.replay === 'failed' && !busy;
-  return `${say('Not another email. Call the supplier on the <b>number already on the vendor master</b> and have them state the <b>exact new account</b>.')}
+  const ready = isReady(p3), logged = !!S.event && call.phase === 'idle', done = call.phase === 'ended' || logged;
+  const shown = done ? lines.length : call.shown, live = call.phase === 'talking', dialing = call.phase === 'dialing' || call.phase === 'ringing';
+  const st = done ? '通話終了 · Call ended' : { idle: '予約済み · Scheduled', dialing: '発信中… · Dialing', ringing: '呼び出し中… · Ringing', talking: '通話中 · Connected' }[call.phase];
+  const secs = done ? 36 : call.secs, failed = S.replay === 'failed' && !busy;
+  return `${say('The <b>bookkeeper</b> makes the call. Matte dials only the <b>number already on the vendor master</b>, never the one in the email, then checks that the supplier states the <b>exact new account</b>.')}
+  <div class="sched">${mtag}<b>折り返し確認 · Callback</b><span>本日 15:44</span><span>山田 (経理) · ${esc(c?.phone_masked || '—')} <span class="muted small">取引先マスタ</span></span><span class="strike">050-••••-7731 (from the email)</span><span class="sp"></span><span class="badge ${ready ? 'ok' : 'idle'}">${ready ? '確認済み' : '予約済み'}</span></div>
   <div class="call">
     <div class="phone" role="img" aria-label="Phone call to the number on the vendor master">
-      <div class="who">取引先マスタ · Vendor master</div>
-      <div class="nm">${esc(c?.person || '')} · アオバワークス</div>
-      <div class="num">${esc(c?.phone_masked || '—')}</div>
-      <div class="from">number on file · not from the email</div>
+      <div class="who">取引先マスタ · Vendor master</div><div class="nm">${esc(c?.person || '')} · アオバワークス</div><div class="num">${esc(c?.phone_masked || '—')}</div><div class="from">number on file · not from the email</div>
       <div class="ring ${dialing ? 'ringing' : ''} ${live ? 'live' : ''}">${live ? '<div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' : done ? '✓' : '☎'}</div>
-      <div class="st">${st}</div>
-      <div class="timer">${call.phase === 'idle' && !S.event ? '' : `00:${String(secs).padStart(2, '0')}`}</div>
-      <div class="endbtn ${dialing || live ? '' : 'off'}">終了</div>
-    </div>
+      <div class="st">${st}</div><div class="timer">${call.phase === 'idle' && !S.event ? '' : `00:${String(secs).padStart(2, '0')}`}</div>
+      <div class="endbtn ${dialing || live ? '' : 'off'}">終了</div></div>
     <div>
       <div class="vlog"><div class="hd"><span><b>通話ログ · Voice log</b> <span class="muted">simulated call · Japanese with English subtitles</span></span><span class="muted mono">${S.event ? esc(S.event.event_id) : 'not started'}</span></div>
         <div class="lines" id="lines">${shown ? lines.slice(0, shown).map((l) => `<div class="ln ${l.sp === 'sys' ? 'sys' : ''} ${l.key ? 'key' : ''}"><span class="ts">${l.ts}</span><span class="who ${l.sp === 'them' ? 'them' : ''}">${l.sp === 'sys' ? 'System' : esc(l.who) + (l.sp === 'them' ? ' · Aoba' : ' · Minato')}</span><span>${esc(l.ja)}<span class="en">${esc(l.en)}</span></span></div>`).join('') : '<div class="ln sys"><span></span><span></span><span>Press <b>Replay callback confirmation</b> to place the call.</span></div>'}</div></div>
       <ul class="checks">
-        <li><span class="cb ok">✓</span><span>Dialed the number on the <b>vendor master</b>: ${esc(c?.phone_masked || '—')}</span></li>
-        <li><span class="cb no">✗</span><span><span class="strike">050-••••-7731</span> from the email: <b>not used</b></span></li>
+        <li><span class="cb ok">✓</span><span>Called the number on the <b>vendor master</b>: ${esc(c?.phone_masked || '—')}</span></li>
+        <li><span class="cb ok">✓</span><span>Same-thread email reply <b>not counted</b> as verification</span></li>
         <li><span class="cb ${ready ? 'ok' : ''}">${ready ? '✓' : ''}</span><span>Supplier stated account ending <b>${esc(last4(p3.invoice.ending))}</b>, an exact match with the invoice</span></li>
         <li><span class="cb ${ready ? 'ok' : ''}">${ready ? '✓' : ''}</span><span>Same rule re-run on the records${ready ? `: <span class="mono small">${esc(p3.result.rule_id)}</span> → <b style="color:var(--ok)">Ready for approval</b>` : ''}</span></li>
       </ul>
       ${failed ? '<p class="fail" style="margin-top:10px">Check unavailable · Retry. P3 stays held; the retry reuses this call\'s event.</p>' : ''}
-    </div>
-  </div>`;
+    </div></div>`;
 }
 
+// ---------- step 5: bank file ----------
 function sApprove() {
-  const ready = S.payments.filter(isReady);
-  const total = ready.reduce((a, p) => a + p.amount_jpy, 0);
+  const ready = S.payments.filter(isReady), total = ready.reduce((a, p) => a + p.amount_jpy, 0);
   const rec = (p) => { const b = bank(p.invoice.bank); return `<td>2</td><td>${esc(b.ja)}</td><td>${esc(b.br)}</td><td>普通</td><td>****${esc(last4(p.invoice.ending))}</td><td class="n">${String(p.amount_jpy).padStart(10, '0')}</td><td>${esc(p.supplier_ja)}</td>`; };
-  return `${say('The approver sees what cleared and why. <b>P3 flipped. P2 is still held</b>, even though it\'s the same supplier: a callback confirms one exact account, not a whole vendor.')}
-  ${payables('matte')}
-  <div class="fb"><div class="hd"><span><b>全銀フォーマット振込データ (preview)</b> · ${ready.length} records · ${yen(total)}</span><span class="muted">Held rows are excluded automatically</span></div>
-<table class="zg mono"><tbody>${S.payments.map((p) => isReady(p) ? `<tr>${rec(p)}<td></td></tr>` : `<tr class="ex">${rec(p)}<td class="why">← held: ${esc(p.result.reason)}</td></tr>`).join('')}</tbody></table></div>
+  return `${say('The approver sees what cleared and why. <b>P3 cleared. P2 is still held</b>, even though it\'s the same supplier: a callback confirms one exact account, not a whole vendor.')}
+  ${mfTabs('集計(支払処理)')}
+  <div class="mfband"></div><div class="tw"><table class="mfgrid"><thead><tr><th>申請番号</th><th>支払先</th><th class="n">合計金額</th><th>振込先</th><th>${mtag}</th></tr></thead><tbody>
+    ${S.payments.map((p) => `<tr class="${p.id === 'P3' && flipNow ? 'flip' : ''}"><td>${APNO[p.id]} <span class="muted small">(${p.id})</span></td><td>${esc(p.supplier_ja)}</td><td class="n">${en(p.amount_jpy)}</td><td>${esc(bank(p.invoice.bank).ja)} ••••${esc(last4(p.invoice.ending))}</td>
+      <td><span class="badge ${isReady(p) ? 'ok' : 'hold'}">${esc(p.result.status)}</span><div class="src">${esc(p.result.reason)}</div></td></tr>`).join('')}</tbody></table></div>
+  <div class="fb"><div class="hd"><span><b>全銀フォーマット振込データ (preview)</b> · ${ready.length} records · ${yen(total)}</span><span class="muted">Matte excludes held rows</span></div>
+    <table class="zg mono"><tbody>${S.payments.map((p) => isReady(p) ? `<tr>${rec(p)}<td></td></tr>` : `<tr class="ex">${rec(p)}<td class="why">← held: ${esc(p.result.reason)}</td></tr>`).join('')}</tbody></table></div>
   <div class="human"><span><b>田中 (CFO)</b> approves and uploads in the bank portal. That step stays human.</span><button disabled title="Outside the prototype">承認して送信 · Approve & send</button></div>`;
 }
 
-const SCENES = { 1: sActivate, 2: sMail, 3: sRun, 4: sHold, 5: sCall, 6: sApprove };
-const MT = ['Setup', 'Runs', 'Vendors', 'Audit log'];
-const APPBARS = {
-  1: () => appbar('Money Forward クラウド債務支払', ['請求書', '支払予定', '取引先マスタ', '振込データ', '連携サービス'], '連携サービス'),
-  2: () => appbar('Gmail', ['受信トレイ', 'ラベル: 請求書'], '受信トレイ'),
-  3: () => appbar('Money Forward クラウド債務支払', ['請求書', '支払予定', '取引先マスタ', '振込データ'], '支払予定'),
-  4: () => appbar('Matte', MT, 'Runs'), 5: () => appbar('Matte', MT, 'Runs'), 6: () => appbar('Matte', MT, 'Runs'),
-};
+const SCENES = { 1: sIntegrations, 2: sInvoices, 3: sCall, 4: sApprove };
 
 function bar() {
   const su = S.setup, p3 = P('P3'), ready = isReady(p3);
   const back = step > 1 ? '<button id="back">← Back</button>' : '';
   let main = '', status = '', extra = '';
   if (step === 1) {
-    if (install === 'store') { main = '<button class="primary" id="addApp">Add Matte</button>'; status = 'Find Matte in 連携サービス'; }
+    if (install === 'home') { main = '<button class="primary" id="openInt">連携サービスを開く · Open integrations</button>'; }
+    else if (install === 'list') { main = '<button class="primary" id="addApp">Add Matte</button>'; }
     else if (install === 'consent') status = 'Review the permissions';
-    else main = activated ? '<button class="primary" id="next">Thursday\'s email →</button>' : `<button class="primary big" id="activate" ${booting || su.status === 'pending' ? 'disabled' : ''}>Activate Matte</button>`;
-    if (su.status === 'pending') status = 'Preparing the check…';
+    else main = '<button class="primary" id="next">請求書へ · Go to invoices →</button>';
   }
-  if (step === 2) main = '<button class="primary" id="next">Friday\'s payment run →</button>';
-  if (step === 3) main = '<button class="primary big" id="reveal">Reveal change</button>';
-  if (step === 4) main = '<button class="primary" id="next">Call the number on file →</button>';
-  if (step === 5) {
+  if (step === 2) {
+    if (scan === 'idle') { main = `<button class="primary big" id="reveal" ${su.status === 'pending' ? 'disabled' : ''}>Reveal change</button>`; status = su.status === 'pending' ? 'Preparing the check…' : 'Click Matteでチェック, or Reveal change'; }
+    else if (scan === 'running') status = 'Matte is checking payees…';
+    else main = '<button class="primary" id="next">Call the number on file →</button>';
+  }
+  if (step === 3) {
     const inCall = busy || ['dialing', 'ringing', 'talking'].includes(call.phase);
     extra = `<label class="aud"><input type="checkbox" id="audio" ${audio ? 'checked' : ''}> Play call audio</label>`;
     main = ready ? '<button class="ok" id="next">Send to approver →</button>'
       : `<button class="primary big" id="replay" ${su.status !== 'ready' || !su.rule || inCall ? 'disabled' : ''}>${S.replay === 'failed' ? 'Retry' : 'Replay callback confirmation'}</button>`;
     status = inCall ? 'Checking confirmation…' : S.replay === 'failed' ? 'Check unavailable · Retry' : ready ? `${p3.result.status} · ${p3.result.reason}` : (su.status !== 'ready' ? 'Verification rule unavailable' : '');
   }
-  if (step === 6) main = '<button id="restart">Replay the story</button>';
+  if (step === 4) main = '<button id="restart">Replay the story</button>';
   return `${back}<span class="status" role="status">${esc(status)}</span><span class="sp"></span>${extra}${main}`;
 }
 
@@ -598,74 +680,73 @@ function render() {
   const su = S.setup, p3 = P('P3'), ready = isReady(p3);
   if (prevP3 && prevP3 !== p3.result.status) flipNow = true;
   prevP3 = p3.result.status;
-
-  $('chips').innerHTML = [['Source', su.partners.tavily], ['Rule', su.partners.model], ['Records', su.partners.runner], ['Rule ID', su.rule?.id || '—']]
-    .map(([k, v]) => `<span class="chip">${k}: <b>${esc(v)}</b></span>`).join('');
-  $('setupBanner').innerHTML = su.status === 'failed'
-    ? `<div class="banner"><span>${esc(su.error || 'Check setup failed.')} Changed payments stay held.</span><button id="retrySetup">Retry check setup</button></div>`
+  $('chips').innerHTML = [['Source', su.partners.tavily], ['Rule', su.partners.model], ['Records', su.partners.runner], ['Rule ID', su.rule?.id || '—']].map(([k, v]) => `<span class="chip">${k}: <b>${esc(v)}</b></span>`).join('');
+  $('setupBanner').innerHTML = su.status === 'failed' ? `<div class="banner"><span>${esc(su.error || 'Check setup failed.')} Changed payments stay held.</span><button id="retrySetup">Retry check setup</button></div>`
     : su.status === 'pending' ? '<div class="banner wait">Setting up the check: retrieving guidance, building and testing the rule…</div>' : '';
-
-  $('rail').innerHTML = STEPS.map((s) => `<li><button class="step ${s.mt ? 'mt' : ''} ${s.n === step ? 'on' : ''} ${s.n < maxStep ? 'done' : ''}" data-step="${s.n}" ${s.n > maxStep ? 'disabled' : ''} aria-current="${s.n === step ? 'step' : 'false'}">
-    <span class="k"><span>${s.n} · ${esc(s.who)}</span></span><span class="t">${esc(s.t)}</span><span class="tool">${esc(s.tool)}</span></button></li>`).join('');
-
+  $('rail').innerHTML = STEPS.map((s) => `<li><button class="step ${s.mt ? 'mt' : ''} ${s.n === step ? 'on' : ''} ${s.n < maxStep ? 'done' : ''}" data-step="${s.n}" ${s.n > maxStep ? 'disabled' : ''} aria-current="${s.n === step ? 'step' : 'false'}"><span class="k"><span>${s.n} · ${esc(s.who)}</span></span><span class="t">${esc(s.t)}</span><span class="tool">${esc(s.tool)}</span></button></li>`).join('');
   const s = STEPS[step - 1];
-  $('addr').textContent = s.addr;
+  const nav = step === 1 && install === 'home' ? 'ホーム' : s.nav;
+  $('addr').textContent = `クラウド債務支払 · ${nav}${step === 3 ? ' · Matte' : ''}`;
   $('when').textContent = s.when;
-  $('appbar').innerHTML = APPBARS[step]();
+  $('appbar').innerHTML = appbar(nav);
   $('body').innerHTML = SCENES[step]();
   $('bar').innerHTML = bar();
   const ln = $('lines'); if (ln) ln.scrollTop = ln.scrollHeight;
-
   const pos = !revealed ? 0 : ready ? 2 : 1, pct = [0, 25, 50][pos];
   $('coin').style.left = pct + '%'; $('fill').style.width = pct + '%';
   $('coin').className = 'coin' + (pos === 1 ? ' hold' : pos === 2 ? ' ok' : '');
   [...$('stops').children].forEach((el, i) => el.classList.toggle('on', i === pos));
   $('transferText').textContent = ['Queued in payment run', 'Needs verification · frozen', 'Ready for approval · stops at the human gate'][pos];
-
-  renderEvidence();
-  bind();
+  renderEvidence(); bind();
   if (active && $(active) && !$(active).disabled) $(active).focus();
   flipNow = false;
 }
 
 function renderEvidence() {
   const su = S.setup, g = su.guidance;
-  $('guidance').innerHTML = g ? `<blockquote style="margin:0 0 6px;padding:8px 10px;border-left:3px solid var(--brand);background:var(--sub);font-size:13px">${esc(g.excerpt).replace(/(contacting a known contact[^.]*\.|do not accept changes requested by email without verifying it first directly)/gi, '<mark>$1</mark>')}</blockquote>
-    <div class="src"><a href="${esc(g.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(g.title)}</a> · ${esc(g.retrieved_via)} · ${esc(g.retrieved_at)}</div>` : '<p class="muted">No guidance retrieved.</p>';
+  $('guidance').innerHTML = g ? `<blockquote style="margin:0 0 6px;padding:8px 10px;border-left:3px solid var(--brand);background:var(--sub);font-size:13px">${esc(g.excerpt).replace(/(contacting a known contact[^.]*\.|do not accept changes requested by email without verifying it first directly)/gi, '<mark>$1</mark>')}</blockquote><div class="src"><a href="${esc(g.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(g.title)}</a> · ${esc(g.retrieved_via)} · ${esc(g.retrieved_at)}</div>` : '<p class="muted">No guidance retrieved.</p>';
   $('rule').innerHTML = su.rule ? `<div class="src">${esc(su.rule.id)} · implements “verify … using contact details held on record”</div>` + su.rule.all.map((p) => `<div class="pred">${esc(p.left)} == ${esc(p.field || JSON.stringify(p.value))}</div>`).join('') : '<p class="muted">Verification rule unavailable.</p>';
   const t = su.tests;
   $('tests').innerHTML = t ? `<p class="${t.passed ? 'pass' : 'fail'}">${t.passed ? 'Test passed · email reply alone stays held' : 'Tests failed'} (${t.cases.filter((c) => c.pass).length}/${t.cases.length})</p>${t.cases.map((c) => `<div class="pred">${c.pass ? '✓' : '✗'} ${esc(c.name)} → ${esc(c.got)}</div>`).join('')}` : '';
   $('callbackEv').innerHTML = S.event ? `<h4 style="margin:12px 0 4px;font-size:12px;color:var(--muted)">Callback event</h4><div class="pred">${esc(S.event.event_id)} · method ${esc(S.event.method)} · outcome ${esc(S.event.outcome)} · ${esc(S.event.contact.label)} ${esc(S.event.contact.phone_masked)} · confirmed ending ${esc(S.event.confirmed_ending)}</div>` : '';
   const reqs = su.model_requests || [];
-  $('modelBody').innerHTML = `<p class="muted small">${esc(su.model_mode ? 'Path: ' + su.model_mode + '. ' : '')}${esc(su.model_note)} Captured outbound request content (credentials excluded). No invoice fields, account or contact values, or row outcomes are sent.</p>` +
-    (reqs.length ? reqs.map((r, i) => `<p class="src">#${i + 1} ${esc(r.label)}</p><pre class="req">${esc(typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 2))}</pre>`).join('') : '<p><b>No model call was made in this run.</b></p>');
+  $('modelBody').innerHTML = `<p class="muted small">${esc(su.model_mode ? 'Path: ' + su.model_mode + '. ' : '')}${esc(su.model_note)} Captured outbound request content (credentials excluded). No invoice fields, account or contact values, or row outcomes are sent.</p>` + (reqs.length ? reqs.map((r, i) => `<p class="src">#${i + 1} ${esc(r.label)}</p><pre class="req">${esc(typeof r.body === 'string' ? r.body : JSON.stringify(r.body, null, 2))}</pre>`).join('') : '<p><b>No model call was made in this run.</b></p>');
   $('trace').innerHTML = S.trace.map((x) => `<li><span class="st">${esc(x.stage)}</span> ${esc(x.text)}</li>`).join('');
 }
 
 function bind() {
   document.querySelectorAll('.step').forEach((b) => (b.onclick = () => go(+b.dataset.step)));
   const on = (id, fn) => { if ($(id)) $(id).onclick = fn; };
-  on('next', () => go(step + 1));
-  on('back', () => go(step - 1));
-  on('reveal', () => go(4));
-  on('restart', () => go(1));
-  on('activate', activate);
-  on('addApp', () => { install = 'consent'; render(); $('allowApp')?.focus(); });
-  on('addAppCard', () => { install = 'consent'; render(); $('allowApp')?.focus(); });
-  on('cancelApp', () => { install = 'store'; render(); });
-  on('allowApp', () => { install = 'config'; render(); });
-  on('retryModel', async () => { S = (await api('/api/setup/retry', {})).data; hardReset(); install = 'config'; render(); poll(); pollThenActivate(); });
+  on('next', () => go(step + 1)); on('back', () => go(step - 1)); on('restart', () => go(1));
+  on('openInt', openInt); on('sideInt', openInt); on('quickInt', openInt);
+  on('addApp', openConsent); on('addAppCard', openConsent);
+  on('cancelApp', () => { install = 'list'; render(); });
+  on('allowApp', () => { install = 'added'; render(); });
+  on('scanBtn', runScan); on('reveal', runScan);
+  on('sendMsg', sendMsg);
   on('replay', replay);
   if ($('audio')) $('audio').onchange = (e) => { audio = e.target.checked; };
   on('openEv', () => { $('evidence').open = true; $('modelInputs').open = true; $('evidence').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); });
+  on('retryModel', async () => { S = (await api('/api/setup/retry', {})).data; const keepStep = 2; hardReset(); install = 'added'; maxStep = step = keepStep; render(); poll(); for (let i = 0; i < 300 && S.setup.status === 'pending'; i++) await new Promise((r) => setTimeout(r, 1000)); runScan(); });
   on('retrySetup', async () => { S = (await api('/api/setup/retry', {})).data; hardReset(); render(); poll(); });
 }
+function openInt() { install = 'list'; render(); }
+function openConsent() { install = 'consent'; render(); $('allowApp')?.focus(); }
 
-async function activate() {
+async function runScan() {
+  if (scan !== 'idle') return;
   const tok = runToken;
-  booting = true; bootShown = 0; render();
-  for (let i = 1; i <= 4; i++) { await sleep(650); if (tok !== runToken) return; bootShown = i; render(); }
-  booting = false; activated = true; render();
+  scan = 'running'; bootShown = 0; rowsChecked = 0; render();
+  for (let i = 1; i <= 3; i++) { await sleep(600); if (tok !== runToken) return; bootShown = i; render(); }
+  for (let r = 1; r <= S.payments.length; r++) { await sleep(450); if (tok !== runToken) return; rowsChecked = r; if (r >= 2) revealed = true; render(); }
+  bootShown = 4; scan = 'done'; revealed = true; render();
+}
+
+async function sendMsg() {
+  const tok = runToken;
+  msg = 'sent'; render();
+  await sleep(1600); if (tok !== runToken) return;
+  msg = 'replied'; render();
 }
 
 function speak(text) {
@@ -679,10 +760,9 @@ function speak(text) {
 
 async function replay() {
   if (busy) return;
-  const tok = runToken, runId = S.run_id;
-  const fail = failArmed; failArmed = false;
+  const tok = runToken, runId = S.run_id, fail = failArmed; failArmed = false;
   busy = true;
-  const needsCall = !S.event; // a retry after a logged call skips the animation and reuses the same event
+  const needsCall = !S.event; // retry after a logged call reuses the same event and skips the animation
   const server = api('/api/replay', { run_id: runId, fail });
   if (needsCall) {
     const p3 = P('P3'), lines = VOICE(p3.invoice_no, last4(p3.invoice.ending), '');
@@ -704,23 +784,20 @@ async function replay() {
 }
 
 function hardReset() {
-  runToken++; step = maxStep = 1; revealed = activated = booting = busy = false; bootShown = 0; prevP3 = null; failArmed = failOnce;
-  call = { phase: 'idle', shown: 0, secs: 0 }; install = 'store';
+  runToken++; step = maxStep = 1; revealed = busy = false; prevP3 = null; failArmed = failOnce;
+  install = 'home'; scan = 'idle'; bootShown = 0; rowsChecked = 0; msg = 'draft';
+  call = { phase: 'idle', shown: 0, secs: 0 };
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   $('evidence').open = false; $('modelInputs').open = false;
 }
 
-async function pollThenActivate() {
-  for (let i = 0; i < 300; i++) { await new Promise((r) => setTimeout(r, 1000)); if (S && S.setup.status !== 'pending') break; }
-  activate();
-}
 async function refresh() { S = (await api('/api/state')).data; render(); }
 let pollTimer = null;
 function poll() { clearInterval(pollTimer); pollTimer = setInterval(async () => { await refresh(); if (S.setup.status !== 'pending') clearInterval(pollTimer); }, 800); }
 
 $('reset').onclick = async () => { S = (await api('/api/reset', {})).data; hardReset(); render(); };
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && install === 'consent') { install = 'store'; render(); return; }
+  if (e.key === 'Escape' && install === 'consent') { install = 'list'; render(); return; }
   if (e.target.closest('input,textarea,summary,pre')) return;
   if (e.key === 'ArrowRight' && step < maxStep) go(step + 1);
   if (e.key === 'ArrowLeft' && step > 1) go(step - 1);
@@ -728,13 +805,15 @@ document.addEventListener('keydown', (e) => {
 
 (async () => {
   await api('/api/reset', {}); await refresh(); poll();
-  if (['consent', 'config'].includes(params.get('install'))) { install = params.get('install'); render(); }
+  if (params.get('install') === 'consent') { install = 'consent'; render(); }
   const jump = +params.get('frame'); // rehearsal / screenshot helper
-  if (jump >= 2 && jump <= 6) {
-    activated = true; bootShown = 4; install = 'config';
-    if (jump >= 5) { revealed = true; maxStep = 5; step = 5; }
-    if ((jump === 6 || params.has('call')) && S.setup.status === 'ready') await replay();
+  if (jump >= 2 && jump <= 4) {
+    install = 'added';
+    if (jump >= 3) { scan = 'done'; bootShown = 4; rowsChecked = 3; revealed = true; }
+    maxStep = jump;
+    if ((jump === 4 || params.has('call')) && S.setup.status === 'ready') { step = 3; await replay(); }
     go(jump);
+    if (jump === 2 && params.has('scan')) runScan();
   }
 })();
 </script>

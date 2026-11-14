@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file-if-exists=.env src/server.js",
-    "test": "node --env-file-if-exists=.env src/selftest.js",
+    "test": "EVAL_RUNNER=local node --env-file-if-exists=.env src/selftest.js",
     "smoke": "node --env-file-if-exists=.env src/smoke.js"
   },
   "dependencies": {

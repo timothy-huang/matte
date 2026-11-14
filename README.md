@@ -45,3 +45,5 @@ Add `?fail=1` to the page URL to make the first replay fail and show the retry p
 Pilot with a bookkeeping firm in shadow mode: compare a proposed payment batch against its verified vendor register, then measure how many flags are genuine changes and how long they take to resolve. Next, exclude held rows from the payment export and route cleared rows to the existing human approver.
 
 Out of scope: PDF parsing, authentication, telephony and banking integrations.
+
+*Illustrative mock-ups. Matte is not affiliated with or endorsed by Money Forward, Google, Yahoo Japan, Microsoft, freee or Intuit. All companies, people, accounts and phone numbers in the demo are fictional.*

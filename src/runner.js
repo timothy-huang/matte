@@ -35,6 +35,15 @@ async function getSandbox() {
     sandboxPromise = (async () => {
       const { Daytona } = await import('@daytonaio/sdk');
       const daytona = new Daytona(); // reads DAYTONA_API_KEY / DAYTONA_API_URL
+      // Reuse this app's sandbox if one exists, so restarts don't pile up sandboxes.
+      let stopped = null;
+      for (const app of ['matte', 'wrong-account']) {
+        for await (const sb of daytona.list({ labels: { app } })) {
+          if (sb.state === 'started') return sb;
+          if (!stopped && sb.state === 'stopped') stopped = sb;
+        }
+      }
+      if (stopped) { await stopped.start(60); return stopped; }
       return daytona.create({ language: 'javascript', labels: { app: 'matte' }, autoStopInterval: 120, autoDeleteInterval: 60 });
     })().catch((e) => { sandboxPromise = null; throw e; });
   }
@@ -59,7 +68,7 @@ export function runnerName() {
 }
 
 export async function warmRunner() {
-  if (runnerName() === 'daytona') await getSandbox();
+  if (runnerName() === 'daytona') await getSandbox().catch(() => {}); // evaluate() falls back to local
 }
 
 // opts.fail: simulate an execution failure (demo of the retry path)
@@ -68,8 +77,16 @@ export async function evaluate(input, opts = {}) {
   const t0 = Date.now();
   if (opts.fail) throw Object.assign(new Error('simulated execution failure'), { runner });
   try {
-    const results = runner === 'daytona' ? await runDaytona(input) : await runLocal(input);
-    return { runner, results, ms: Date.now() - t0 };
+    if (runner === 'daytona') {
+      try {
+        return { runner, results: await runDaytona(input), ms: Date.now() - t0 };
+      } catch (e) {
+        // Spec fallback: if Daytona is blocked, run the same evaluator locally and say so.
+        console.error('[runner] Daytona unavailable, using local process:', e.message);
+        return { runner: 'local (Daytona unavailable)', results: await runLocal(input), ms: Date.now() - t0 };
+      }
+    }
+    return { runner, results: await runLocal(input), ms: Date.now() - t0 };
   } catch (e) {
     e.runner = runner;
     throw e;
