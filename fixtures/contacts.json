@@ -1,2 +1,12 @@
-{ "TC-AOBA-01": { "label": "Aoba Works accounts desk (number on file)", "phone_masked": "03-••••-4417" },
-  "TC-KUMO-01": { "label": "Kumo Supplies finance (number on file)", "phone_masked": "06-••••-2290" } }
+{
+  "TC-AOBA-01": {
+    "label": "Aoba Works accounts desk (number on vendor master)",
+    "phone_masked": "03-••••-4417",
+    "person": "山田 (経理)"
+  },
+  "TC-KUMO-01": {
+    "label": "Kumo Supplies finance (number on vendor master)",
+    "phone_masked": "06-••••-2290",
+    "person": "中村 (経理)"
+  }
+}

@@ -1,4 +1,4 @@
-# Wrong Account
+# Matte
 
 **Compares the destination on an invoice with the verified account on file, and holds changed payments until a callback to the number already on file confirms the exact new account.** The cleared payment then becomes *Ready for approval* by a human. The prototype stops at the approval gate.
 
@@ -13,6 +13,8 @@ Japan's IPA documented a case where a business paid a fraudulent account after a
 | 1. Retrieve guidance | **Tavily** (extract, advanced) | Pulls the official passage at setup and logs the title, URL, excerpt and whether it was live or cached. |
 | 2. Propose and test the rule | **Open-weight model on Nosana** (Ollama, `qwen3.8:27b`, RTX 3090) | The model sees only the public guidance, field definitions, abstract examples and an abstract test tool. It proposes a JSON rule: allowed fields, equality and conjunction only. The app validates the rule against the required predicates and runs 11 abstract tests before activating it. |
 | 3. Apply the rule to records | **Daytona** sandbox | The fixed evaluator runs with the validated rule and the synthetic records. Results return only to the app. Replay reuses the same rule ID with no new web or model call. |
+
+**Status at submission (14 Nov, Tokyo Agent Forge):** Tavily and Daytona ran live. We deployed `qwen3.8:27b` on a Nosana RTX 3090 node, and Matte sends it the rule-proposal request on every startup. The node had not finished starting by the deadline (it returned HTTP 503), so the demo used the prewritten, source-linked rule. That rule passed the same validation and 11 tests. The UI says so on the *Rule* chip (`Nosana not up yet → prewritten rule`), on the activation screen and in the Model inputs drawer, which shows the request that was sent. When the node answers, **Retry Nosana** on the setup screen re-runs setup, and the model's rule goes live once it passes the same checks.
 
 **Boundary:** enforced by the application. Invoice fields, account and contact values, and row outcomes are never sent to the model or its tools. The **Model inputs** drawer shows the captured outbound request bodies, with credentials excluded.
 

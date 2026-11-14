@@ -15,6 +15,8 @@ const CONTACTS = load('contacts.json');
 const VENDORS_SNAPSHOT = JSON.stringify(VENDORS);
 
 const now = () => new Date().toISOString();
+const MODEL_HOST = /nos\.ci/.test(process.env.MODEL_BASE_URL || '') ? 'Nosana' : 'model server';
+const MODEL_LABEL = `${MODEL_HOST} · ${process.env.MODEL_NAME || 'model'}`;
 const ruleId = (rule) => 'rule-' + crypto.createHash('sha256').update(JSON.stringify(rule.all)).digest('hex').slice(0, 8);
 
 // ---------- setup (once per server, retryable) ----------
@@ -28,6 +30,7 @@ const setup = {
   model_mode: null,
   model_requests: [],
   model_note: '',
+  model_status: null,
   trace: [],
   baseline: null, // initial results for all payments (no callbacks)
   error: null,
@@ -35,7 +38,7 @@ const setup = {
 const strace = (stage, text) => { setup.trace.push({ t: now(), stage, text }); console.log(`[setup:${stage}] ${text}`); };
 
 async function runSetup() {
-  Object.assign(setup, { status: 'pending', trace: [], error: null, rule: null, tests: null, model_requests: [], model_note: '', baseline: null });
+  Object.assign(setup, { status: 'pending', trace: [], error: null, rule: null, tests: null, model_requests: [], model_note: '', model_status: null, baseline: null });
   // 1. Guidance via Tavily
   let guidance = null;
   let cachedRule = null;
@@ -68,15 +71,19 @@ async function runSetup() {
       setup.model_mode = out.mode;
       setup.model_requests = out.requests;
       setup.rationale = out.rationale;
-      setup.partners.model = modelPath() === 'codeaf' ? 'CodeAF → Ollama' : `Ollama (${process.env.MODEL_NAME})`;
+      setup.partners.model = modelPath() === 'codeaf' ? `CodeAF → ${MODEL_LABEL}` : MODEL_LABEL;
       candidate = out.rule ? { all: out.rule.all } : null;
       strace('model', `proposal via ${out.mode}: ${candidate ? JSON.stringify(candidate.all.map((p) => p.left + '==' + (p.field || JSON.stringify(p.value)))) : 'none'}`);
     } catch (e) {
       setup.model_requests = e.requests || [];
       const attempted = setup.model_requests.length > 0;
       strace('model', `model path unavailable (${e.message}) — using prewritten source-linked rule` + (attempted ? ' (model request was sent but failed; no model output used)' : ' (no model call was made)'));
-      setup.partners.model = 'fallback (prewritten rule)';
-      setup.model_note = attempted ? 'The model request below was sent but failed; no model output was used — prewritten rule applied.' : 'No model call was made — prewritten rule applied.';
+      const why = /\b503\b|not ready/.test(e.message) ? 'not up yet' : /HTTP \d+/.test(e.message) ? e.message.match(/HTTP \d+/)[0] : 'unreachable';
+      setup.model_status = { host: MODEL_HOST, model: process.env.MODEL_NAME || '', state: 'offline', reason: e.message, why };
+      setup.partners.model = modelPath() === 'off' ? 'prewritten rule (model disabled)' : `${MODEL_HOST} ${why} → prewritten rule`;
+      setup.model_note = attempted
+        ? `The request below was sent to ${MODEL_LABEL} but the server was ${why} (${e.message}). No model output was used; the prewritten, source-linked rule was applied and tested instead.`
+        : 'No model call was made; the prewritten rule was applied.';
     }
     if (candidate) {
       const t = runAbstractTests(candidate);
@@ -185,7 +192,7 @@ function view() {
     payments: PAYMENTS.map((p) => {
       const v = VENDORS.find((x) => x.id === p.vendor_id);
       return {
-        id: p.id, supplier: v.name, amount_jpy: p.amount_jpy, invoice_no: p.invoice_no, thread_reply: p.thread_reply,
+        id: p.id, supplier: v.name, supplier_ja: v.name_ja, amount_jpy: p.amount_jpy, invoice_no: p.invoice_no, thread_reply: p.thread_reply,
         on_file: { bank: bank(v.verified_destination), ending: mask(v.verified_destination) },
         invoice: { bank: bank(p.proposed_destination), ending: mask(p.proposed_destination) },
         changed: p.proposed_destination !== v.verified_destination,
@@ -196,7 +203,7 @@ function view() {
     setup: {
       status: setup.status, error: setup.error, guidance: setup.guidance && { title: setup.guidance.title, url: setup.guidance.url, excerpt: setup.guidance.excerpt, retrieved_via: setup.guidance.retrieved_via, retrieved_at: setup.guidance.retrieved_at },
       rule: setup.rule, tests: setup.tests, rationale: setup.rationale, partners: setup.partners,
-      model_mode: setup.model_mode, model_note: setup.model_note, model_requests: setup.model_requests,
+      model_mode: setup.model_mode, model_note: setup.model_note, model_status: setup.model_status, model_requests: setup.model_requests,
     },
     trace: [...setup.trace, ...run.trace],
   };
@@ -229,6 +236,6 @@ http.createServer(async (req, res) => {
     send(res, 500, { error: e.message });
   }
 }).listen(process.env.PORT || 5173, () => {
-  console.log(`Wrong Account on http://localhost:${process.env.PORT || 5173} · model=${modelPath()} · runner=${runnerName()}`);
+  console.log(`Matte on http://localhost:${process.env.PORT || 5173} · model=${modelPath()} · runner=${runnerName()}`);
   runSetup();
 });

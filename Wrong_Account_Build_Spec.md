@@ -1,4 +1,4 @@
-# Wrong Account — Tokyo Agent Forge build spec
+# Matte — Tokyo Agent Forge build spec
 
 ## The Friday payment run
 
@@ -6,7 +6,7 @@ It’s Friday afternoon. You’re about to pay a supplier **¥480,000**. The wor
 
 Japan’s IPA documented a case where a Japanese business sent money to a fraudulent account after a change request came from its supplier’s genuine, apparently compromised inbox. [IPA case report](https://www.ipa.go.jp/security/bec/hjuojm0000003c8r-att/bec_case7.pdf)
 
-**Wrong Account compares the destination on the invoice with the verified account on file.** It holds changed payments until a callback to the number already on file confirms the exact new account. That payment then becomes **Ready for approval** by a human. The demo uses synthetic records, a simulated callback, and an animated transfer that stops at the approval gate.
+**Matte compares the destination on the invoice with the verified account on file.** It holds changed payments until a callback to the number already on file confirms the exact new account. That payment then becomes **Ready for approval** by a human. The demo uses synthetic records, a simulated callback, and an animated transfer that stops at the approval gate.
 
 ## One screen, one minute
 

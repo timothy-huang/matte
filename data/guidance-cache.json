@@ -3,7 +3,7 @@
   "url": "https://www.bankofireland.com/security-zone/protect-your-business/vendor-email-compromise/",
   "excerpt": "Fraudsters may change an email address to make it look as though it has come from someone you are used to dealing with, or they may have hacked the sender's email account to trick you into believing the request is genuine. Always check email addresses carefully, and Verify the change by contacting a known contact in the company directly, using contact details held on record, or by using a phone number displayed on the company's official website. Links or contact details contained in an email or letter requesting the change could be fraudulent. Don't use them. Regularly review vendor/supplier records to ensure they are up to date and do not accept changes requested by email without verifying it first directly.",
   "retrieved_via": "tavily (live)",
-  "retrieved_at": "2026-11-14T07:05:32.972Z",
+  "retrieved_at": "2026-11-14T07:32:53.865Z",
   "validated_rule": {
     "id": "rule-efcc2922",
     "all": [

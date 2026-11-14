@@ -35,7 +35,7 @@ async function getSandbox() {
     sandboxPromise = (async () => {
       const { Daytona } = await import('@daytonaio/sdk');
       const daytona = new Daytona(); // reads DAYTONA_API_KEY / DAYTONA_API_URL
-      return daytona.create({ language: 'javascript', labels: { app: 'wrong-account' }, autoStopInterval: 120, autoDeleteInterval: 60 });
+      return daytona.create({ language: 'javascript', labels: { app: 'matte' }, autoStopInterval: 120, autoDeleteInterval: 60 });
     })().catch((e) => { sandboxPromise = null; throw e; });
   }
   return sandboxPromise;
